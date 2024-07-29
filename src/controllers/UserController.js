@@ -1,12 +1,21 @@
+const { where } = require("sequelize");
 const jwtHelper = require("../helpers/jwt.helper");
 const User = require("../models/user");
+const News = require("../models/news");
 
 const LoginController = {
   Show: (req, res) => {
     res.render("show");
   },
-  Home: (req, res) => {
-    res.render("home");
+  Home: async(req, res) => {
+    // const cards = Array(8).fill({
+    //   img: 'https://via.placeholder.com/150',
+    //   title: 'Card title',
+    //   text: 'Some quick example text to build on the card title and make up the bulk of the card\'s content.',
+    //   link: '#'
+    // });
+    const cards = await News.findAll();
+    res.render("home",{ cards });
   },
   Login: (req, res) => {
     res.render("login", { title: "dung" });
@@ -24,12 +33,11 @@ const LoginController = {
       return res.send("mk k khớp");
     }
     try {
-      const checkUsername = await User.findOne({ username });
+      const checkUsername = await User.findOne({where: { username }});
       if (checkUsername) {
         return res.status(400).send("username đã tồn tại");
       }
-      const user = new User({ username, password, confirmPassword });
-      await user.save();
+      const newUser = await User.create({username, password});
       res.redirect("/user/login");
     } catch (error) {
       res.status(500).send("server err");
@@ -39,7 +47,7 @@ const LoginController = {
   postLogin: async (req, res) => {
     try {
       const { username, password } = req.body;
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ where: { username } });
       if (!user) {
         return res.status(401).json({ error: "Tên người dùng k có." });
       }

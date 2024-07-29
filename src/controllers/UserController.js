@@ -18,22 +18,34 @@ const LoginController = {
   postRegister: async (req, res) => {
     console.log(req.body);
     const { username, password, confirmPassword } = req.body;
-    // console.log(username);
+  
     if (password !== confirmPassword) {
-      return res.send("mk k khớp");
+      return res.render('register', {
+        error: "Mật khẩu không khớp",
+        username,
+        password,
+        confirmPassword
+      });
     }
+  
     try {
-      const checkUsername = await User.findOne({where: { username }});
+      const checkUsername = await User.findOne({ where: { username } });
       if (checkUsername) {
-        return res.status(400).send("username đã tồn tại");
+        return res.render('register', {
+          error: "Tên đăng nhập đã tồn tại",
+          username,
+          password,
+          confirmPassword
+        });
       }
-      const newUser = await User.create({username, password});
-      res.redirect("/user/login");
+  
+      const newUser = await User.create({ username, password });
+      res.redirect("/login");
     } catch (error) {
-      res.status(500).send("server err");
+      res.status(500).send("Lỗi server");
     }
   },
-
+  
   postLogin: async (req, res) => {
     try {
       const { username, password } = req.body;
@@ -75,7 +87,8 @@ const LoginController = {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 3650,
       });
-      return res.redirect("/user/home");
+      // localStorage.setItem("username", user.username);
+      return res.redirect("/");
       // return res.status(200).json({accessToken, refreshToken});
     } catch (error) {
       res.status(500).send("server err");

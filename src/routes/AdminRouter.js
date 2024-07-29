@@ -1,11 +1,13 @@
 const express = require("express");
 const NewsController = require("../controllers/NewsController");
+const AuthMiddleware = require("../middleware/AuthMiddleware");
 // const multer = require('multer');
 // const storage = multer.memoryStorage();
 // const upload = multer({ storage: storage });
 
 
 const router = express.Router();
+router.use(AuthMiddleware.isAdmin);
 router.post("/delete/:id",NewsController.Delete);
 router.post("/update/:id",NewsController.postUpdate);
 router.get("/update/:id",NewsController.Edit);

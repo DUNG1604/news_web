@@ -1,12 +1,14 @@
-<h1>Login Page</h1>
-<form action="/login" method="post">
-  <div class="mb-3 mt-[200px]">
-    <label for="username" class="form-label ">Username</label>
-    <input type="text" class="form-control" name="username">
-  </div>
-  <div class="mb-3">
-    <label for="password" class="form-label">Password</label>
-    <input type="password" class="form-control" name="password">
-  </div>
-  <button type="submit" class="btn btn-primary">Login</button>
-</form>
+<div class="container" style="max-width: 400px; margin-top: 100px;">
+  <h1 class="text-center" style="margin-bottom: 30px;">Đăng nhập</h1>
+  <form action="/login" method="post" style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; background-color: #f9f9f9;">
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label for="username" style="font-weight: bold; margin-bottom: 10px;">Tên đăng nhập:</label>
+      <input type="text" class="form-control" name="username" id="username" placeholder="Tên đăng nhập" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label for="password" style="font-weight: bold; margin-bottom: 10px;">Mật khẩu:</label>
+      <input type="password" class="form-control" name="password" id="password" placeholder="Mật khẩu" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; font-size: 16px; border-radius: 4px;">Login</button>
+  </form>
+</div>

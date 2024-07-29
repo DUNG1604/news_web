@@ -1,0 +1,35 @@
+<div class="container mt-5">
+  <div style="display: flex; justify-content: space-between;">
+    <div style="display: flex;">
+      <a
+        href="/admin/update/<%= news.id %>"
+        class="btn btn-primary"
+        style="margin-top: auto; margin-right: 10px;"
+        >Sửa bài viết</a
+      >
+      <form
+        action="/admin/delete/<%= news.id %>"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <button type="submit" class="btn btn-danger">Xóa bài viết</button>
+      </form>
+    </div>
+    <div style="display: flex; align-items: center">
+      <span style="margin-right: 4px" class="material-symbols-outlined">
+        visibility </span
+      ><%- news.views %> Lượt xem
+    </div>
+  </div>
+  <div
+    style="
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 10px;
+    "
+  >
+    <%= news.title %>
+  </div>
+  <div class="card-text"><%- news.content %></div>
+</div>

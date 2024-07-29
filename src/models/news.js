@@ -1,11 +1,12 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, INTEGER } = require('sequelize');
 const { sequelize } = require("../helpers/ConnectDB");
 const User = require('./user');
 
 const News = sequelize.define('News', {
   id: {
+    // type: DataTypes.UUID,
+    // defaultValue: DataTypes.UUIDV4,
     type: DataTypes.INTEGER,
-    autoIncrement: true,
     primaryKey: true
   },
   title: {

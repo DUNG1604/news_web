@@ -20,10 +20,10 @@ app.set("views", path.join(__dirname, "views"));
 connectDB();
 sequelize.sync()
   .then(() => {
-    console.log('All models were synchronized successfully.');
+    console.log('Đã đồng bộ DB');
   })
   .catch(err => {
-    console.error('Error synchronizing models:', err);
+    console.error('Lỗi đồng bộ BD:', err);
   });
 
 router(app);

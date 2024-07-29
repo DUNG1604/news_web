@@ -17,7 +17,7 @@ let isAuth = async (req, res, next) => {
     }
   } else {
     return res.status(403).send({
-      message: 'No token provided.',
+      message: 'k có token',
     });
   }
 }
@@ -28,7 +28,7 @@ let isAdmin = async(req, res, next) => {
   req.jwtDecoded = decoded;
   if (req.jwtDecoded.data.role !== 'admin') {
     return res.status(403).json({
-      message: 'Forbidden: Admins only.',
+      message: 'Chỉ dành cho admin.',
     });
   }
   next();

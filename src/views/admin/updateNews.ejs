@@ -1,0 +1,36 @@
+<div class="container mt-5">
+    <form action="/admin/update/<%= news.id %>" method="POST" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="title" class="form-label fw-bold">Tiêu đề:</label>
+        <input type="text" id="title" name="title" value="<%= news ? news.title : '' %>" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="img" class="form-label fw-bold">Ảnh bìa:</label>
+        <input type="file" id="img" name="img" class="form-control" accept="image/*" onchange="previewImage(event)">
+        <input type="hidden" name="existingImg" value="<%= news ? news.img : '' %>">
+      </div>
+      <div class="mb-3">
+        <img id="preview" src="<%= news && news.img ? news.img : '' %>" style="display: block; width: 200px; height: 300px; border: 2px solid #ddd; margin-top: 10px; object-fit: cover;" />
+      </div>
+      <div class="mb-3">
+        <label for="editor1" class="form-label fw-bold">Nội dung:</label>
+        <textarea id="editor1" name="content" rows="10" cols="80" class="form-control"><%= news ? news.content : '' %></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Cập nhật</button>
+    </form>
+  </div>
+  
+  <script>
+    document.getElementById('img').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById('preview');
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>

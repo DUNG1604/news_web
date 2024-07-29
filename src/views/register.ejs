@@ -1,16 +1,26 @@
-<h1>Register Page</h1>
-<form action="/register" method="post">
-  <div class="mb-3">
-    <label for="username" class="form-label">Username</label>
-    <input type="text" class="form-control" name="username" required>
-  </div>
-  <div class="mb-3">
-    <label for="password" class="form-label">Password</label>
-    <input type="password" class="form-control" name="password" required>
-  </div>
-  <div class="mb-3">
-    <label for="confirmPassword" class="form-label">Confirm Password</label>
-    <input type="password" class="form-control" name="confirmPassword" required>
-  </div>
-  <button type="submit" class="btn btn-primary">Register</button>
-</form>
+<div class="container" style="max-width: 400px; margin-top: 100px;">
+  <h1 class="text-center" style="margin-bottom: 30px;">Đăng ký</h1>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div style="color: red; font-size: 0.875em; margin-top: 5px; margin-bottom: 5px;">
+      <%= error %>
+    </div>
+  <% } %>
+  <form action="/register" method="post" style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; background-color: #f9f9f9;">
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label for="username" style="font-weight: bold; margin-bottom: 10px;">Tên đăng nhập:</label>
+      <input type="text" class="form-control" name="username" id="username" placeholder="Tên đăng nhập" value="<%= typeof username !== 'undefined' ? username : '' %>" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label for="password" style="font-weight: bold; margin-bottom: 10px;">Mật khẩu:</label>
+      <input type="password" class="form-control" name="password" id="password" placeholder="Mật khẩu" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label for="confirmPassword" style="font-weight: bold; margin-bottom: 10px;">Nhập lại mật khẩu:</label>
+      <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Nhập lại mật khẩu" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; font-size: 16px; border-radius: 4px;">Đăng ký</button>
+  </form>
+  <p class="text-center" style="margin-top: 20px;">
+    Đã có tài khoản? <a href="/login" style="color: #007bff; text-decoration: none;">Đăng nhập</a>
+  </p>
+</div>

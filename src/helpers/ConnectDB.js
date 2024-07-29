@@ -1,13 +1,17 @@
-const mongoose = require('mongoose');
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize('news_web', 'root', 'Dung2002.', {
+  host: 'localhost',
+  dialect: 'mysql'
+});
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect('mongodb://localhost:27017/User');
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    await sequelize.authenticate();
+    console.log('Connect DB thành công');
   } catch (error) {
-    console.error(`Error connecting to MongoDB: ${error.message}`);
-    process.exit(1); // Exit process with failure
+    console.error('Connect thất bại:', error);
   }
 };
 
-module.exports = connectDB;
+module.exports = { sequelize, connectDB };

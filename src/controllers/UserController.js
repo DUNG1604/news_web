@@ -9,15 +9,12 @@ const LoginController = {
     res.cookie("refreshToken", "", { expires: new Date(0) });
     res.status(200).json("đã đăng xuất");
   },
-  Show: (req, res) => {
-    res.render("show");
-  },
   Login: (req, res) => {
-    res.render("login", { title: "dung" });
+    res.render("auth/login");
   },
 
   Register: (req, res) => {
-    res.render("register");
+    res.render("auth/register");
   },
 
   postRegister: async (req, res) => {
@@ -107,13 +104,6 @@ const LoginController = {
     } catch (error) {
       res.status(500).send("server err");
     }
-  },
-  Admin: (req, res) => {
-    res.render("admin");
-  },
-  Test: (req, res) => {
-    const content = req.params.test;
-    res.send(`test: ${content}`);
   },
 };
 

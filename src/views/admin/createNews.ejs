@@ -1,5 +1,5 @@
 <div class="container mt-5">
-  <form action="/admin/create" method="POST" enctype="multipart/form-data">
+  <form id="create_news" action="/admin/create" method="POST" enctype="multipart/form-data">
     <div class="mb-3">
       <label for="title" class="form-label fw-bold">Tiêu đề:</label>
       <input type="text" id="title" name="title" class="form-control">
@@ -32,4 +32,9 @@
       reader.readAsDataURL(file);
     }
   });
+  // $('#create_news').on('submit', function(e){
+  //   e.preventDefault();
+
+  // })
+
 </script>

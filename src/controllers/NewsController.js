@@ -146,7 +146,7 @@ const NewsController = {
                 content,
                 img: publicUrl,
               });
-              res.redirect("/");
+              res.redirect("/admin");
             } catch (error) {
               console.error("tạo bài báo thất bại", error);
               res.status(500).send("tạo bài báo thất bại");

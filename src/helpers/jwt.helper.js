@@ -27,7 +27,10 @@ let verifyToken = (token, secretKey) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secretKey, (error, decoded) => {
       if (error) {
-        return reject(error);
+        return reject({
+          message: "token bị đổi",
+          error
+        });
       }
       resolve(decoded);
     });

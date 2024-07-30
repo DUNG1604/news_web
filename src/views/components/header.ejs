@@ -1,0 +1,54 @@
+<header
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 10px 20px;
+  "
+>
+  <div
+    class="container-fluid"
+    style="display: flex; justify-content: space-between; align-items: center"
+  >
+    <div style="font-size: 1.5rem; font-weight: bold">NEWS</div>
+    <div id="auth-buttons" style="display: flex; gap: 10px"></div>
+  </div>
+</header>
+<div style="margin-bottom: 100px"></div>
+
+<script>
+    const $authButtons = $("#auth-buttons");
+    const username = localStorage.getItem("username");
+
+    if (username) {
+      $authButtons.html(`
+          <span style="align-self: center;">${username}</span>
+          <button type="button" class="btn btn-outline-danger" id="logout-button">Đăng xuất</button>
+        `);
+    } else {
+      $authButtons.html(`
+          <a href="/login" style="text-decoration: none; color: inherit;">
+            <button type="button" class="btn btn-outline-success">Đăng nhập</button>
+          </a>
+          <a href="/register" style="text-decoration: none; color: inherit;">
+            <button type="button" class="btn btn-outline-primary">Đăng kí</button>
+          </a>
+        `);
+    }
+    $("#logout-button").on("click", function () {
+        $.ajax({
+          url: "/logout",
+          type: "POST",
+          contentType: "application/json",
+          success: function (data) {
+            console.log("dangxuat");
+            localStorage.removeItem("username");
+            window.location.href = "/login";
+          },
+        });
+      });
+</script>

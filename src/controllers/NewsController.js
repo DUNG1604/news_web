@@ -10,7 +10,7 @@ const NewsController = {
   Delete: async (req, res) =>{
     const newsId = req.params.id;
     await News.destroy({where: {id: newsId}});
-    res.redirect("/admin/getall");
+    res.redirect("/admin");
   },
   postUpdate: async (req, res) => {
     const newsId = req.params.id;
@@ -49,7 +49,7 @@ const NewsController = {
                         news.content = content;
                         news.img = publicUrl;
                         await news.save();
-                        return res.redirect("/");
+                        return res.redirect("/admin");
                     } catch (error) {
                         console.error("lỗi không update dc", error);
                         return res.status(500).send("Lỗi không update dc");
@@ -63,7 +63,7 @@ const NewsController = {
                     news.content = content;
                     news.img = existingImg; 
                     await news.save();
-                    return res.redirect("/");
+                    return res.redirect("/admin");
                 } catch (error) {
                     console.error("lỗi không update dc", error);
                     return res.status(500).send("lỗi không update dc");

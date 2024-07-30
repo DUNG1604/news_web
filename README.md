@@ -5,7 +5,7 @@
 3. Cách cài đặt và run
 - Cài các gói thư viện cần thiết
 > npm install
-- Tạo 1 file
+- Tạo 1 file cùng cấp với package.json
 >ce-web-8212b-firebase-adminsdk-wo21q-1c7912ffdb.json
 ````
 {

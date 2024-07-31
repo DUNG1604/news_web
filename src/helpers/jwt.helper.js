@@ -27,10 +27,10 @@ let verifyToken = (token, secretKey) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secretKey, (error, decoded) => {
       if (error) {
-        return reject({
-          message: "token bị đổi",
-          error
-        });
+        if (error.name === 'TokenExpiredError') {
+          return reject({ message: "token hết hạn" });
+        }
+        return reject({ message: "token không hợp lệ" });
       }
       resolve(decoded);
     });

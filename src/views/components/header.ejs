@@ -21,16 +21,19 @@
 <div style="margin-bottom: 100px"></div>
 
 <script>
-  const $authButtons = $("#auth-buttons");
-  const username = localStorage.getItem("username");
+  $(document).ready(function() {
+    const $authButtons = $("#auth-buttons");
+    const username = localStorage.getItem("username");
+    const accessToken = getCookie("accessToken");
 
-  if (username) {
-    $authButtons.html(`
+    function updateAuthButtons() {
+      if (username && accessToken) {
+        $authButtons.html(`
           <span style="align-self: center;">${username}</span>
           <button type="button" class="btn btn-outline-danger" id="logout-button">Đăng xuất</button>
         `);
-  } else {
-    $authButtons.html(`
+      } else {
+        $authButtons.html(`
           <a href="/login" style="text-decoration: none; color: inherit;">
             <button type="button" class="btn btn-outline-success">Đăng nhập</button>
           </a>
@@ -38,39 +41,33 @@
             <button type="button" class="btn btn-outline-primary">Đăng kí</button>
           </a>
         `);
-  }
-  $("#logout-button").on("click", function () {
-    $.ajax({
-      url: "/logout",
-      type: "POST",
-      contentType: "application/json",
-      success: function (data) {
-        console.log("dangxuat");
         localStorage.removeItem("username");
-        window.location.href = "/login";
-      },
+      }
+    }
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+
+    updateAuthButtons();
+
+    $(document).on("click", "#logout-button", function () {
+      $.ajax({
+        url: "/logout",
+        type: "POST",
+        contentType: "application/json",
+        success: function (data) {
+          console.log("Đăng xuất thành công");
+          localStorage.removeItem("username");
+          document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+          window.location.href = "/login";
+        },
+        error: function (xhr) {
+          console.error("Lỗi đăng xuất:", xhr.responseText);
+        }
+      });
     });
   });
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  }
-  const accessToken = getCookie("accessToken");
-  if (accessToken) {
-    $authButtons.html(`
-          <span style="align-self: center;">${username}</span>
-          <button type="button" class="btn btn-outline-danger" id="logout-button">Đăng xuất</button>
-        `);
-  } else {
-    $authButtons.html(`
-          <a href="/login" style="text-decoration: none; color: inherit;">
-            <button type="button" class="btn btn-outline-success">Đăng nhập</button>
-          </a>
-          <a href="/register" style="text-decoration: none; color: inherit;">
-            <button type="button" class="btn btn-outline-primary">Đăng kí</button>
-          </a>
-        `);
-    localStorage.removeItem("username");
-  }
 </script>

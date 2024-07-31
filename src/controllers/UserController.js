@@ -70,7 +70,7 @@ const LoginController = {
       };
       const accessTokenSecret =
         process.env.ACCESS_TOKEN_SECRET || "access-token-secret-example";
-      const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "1h";
+      const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "20s";
       const refreshTokenLife = process.env.REFRESH_TOKEN_LIFE || "3650d";
       const refreshTokenSecret =
         process.env.REFRESH_TOKEN_SECRET || "refresh-token-secret-example";
@@ -103,6 +103,36 @@ const LoginController = {
       res.status(200).json({ message: "Đăng nhập thành công", data });
     } catch (error) {
       res.status(500).send("server err");
+    }
+  },
+  postRefreshToken: async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      try {
+        const refreshTokenSecret =
+          process.env.REFRESH_TOKEN_SECRET || "refresh-token-secret-example";
+        const accessTokenSecret =
+          process.env.ACCESS_TOKEN_SECRET || "access-token-secret-example";
+        const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "20s";
+        const decode = await jwtHelper.verifyToken(
+          refreshToken,
+          refreshTokenSecret
+        );
+        const userData = decode.data;
+        const accessToken = await jwtHelper.generateToken(
+          userData,
+          accessTokenSecret,
+          accessTokenLife
+        );
+        res.cookie("accessToken", accessToken, {
+          // httpOnly: true,
+          maxAge: 1000 * 60 * 60,
+        });
+        console.log("đã tạo token mới");
+        return res.status(200).json({ accessToken })
+      } catch (error) {
+        return res.send("không refresh được");
+      }
     }
   },
 };

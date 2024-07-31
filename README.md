@@ -5,6 +5,10 @@
 3. Cách cài đặt và run
 - Cài các gói thư viện cần thiết
 > npm install
+- Tạo file .env
+````
+CONFIG_FIREBASE = "../../ce-web-8212b-firebase-adminsdk-wo21q-1c7912ffdb.json"
+````
 - Tạo 1 file cùng cấp với package.json
 >ce-web-8212b-firebase-adminsdk-wo21q-1c7912ffdb.json
 ````
@@ -24,4 +28,7 @@
 ````
 
 - Chạy dự án
-> nodemon 
+> nodemon
+- Truy cập địa chỉ
+> http://localhost:8017/
+- Thêm acc admin trong db với role admin

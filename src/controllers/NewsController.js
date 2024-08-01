@@ -7,74 +7,76 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const NewsController = {
-  Delete: async (req, res) =>{
+  Delete: async (req, res) => {
     const newsId = req.params.id;
-    await News.destroy({where: {id: newsId}});
+    await News.destroy({ where: { id: newsId } });
     res.redirect("/admin");
   },
   postUpdate: async (req, res) => {
     const newsId = req.params.id;
     upload.single("img")(req, res, async (err) => {
-        if (err) {
-            return res.status(500).send("uploading file thất bại");
+      if (err) {
+        return res.status(500).send("uploading file thất bại");
+      }
+
+      const { title, content, existingImg } = req.body;
+      const img = req.file;
+
+      try {
+        const news = await News.findOne({ where: { id: newsId } });
+
+        if (!news) {
+          return res.status(404).send("Không có bài báo nào");
         }
 
-        const { title, content, existingImg } = req.body;
-        const img = req.file;
+        if (img) {
+          const blob = bucket.file(`news_web/${img.originalname}`);
+          const blobStream = blob.createWriteStream({
+            resumable: false,
+            contentType: img.mimetype,
+          });
 
-        try {
-            const news = await News.findOne({ where: { id: newsId } });
+          blobStream.on("error", (err) => {
+            console.error(err);
+            return res.status(500).send("upload firebase thất bại");
+          });
 
-            if (!news) {
-                return res.status(404).send("Không có bài báo nào");
+          blobStream.on("finish", async () => {
+            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
+              bucket.name
+            }/o/${encodeURIComponent(blob.name)}?alt=media`;
+
+            try {
+              news.title = title;
+              news.content = content;
+              news.img = publicUrl;
+              await news.save();
+              return res.redirect("/admin");
+            } catch (error) {
+              console.error("lỗi không update dc", error);
+              return res.status(500).send("Lỗi không update dc");
             }
+          });
 
-            if (img) {
-                const blob = bucket.file(`news_web/${img.originalname}`);
-                const blobStream = blob.createWriteStream({
-                    resumable: false,
-                    contentType: img.mimetype,
-                });
-
-                blobStream.on("error", (err) => {
-                    console.error(err);
-                    return res.status(500).send("upload firebase thất bại");
-                });
-
-                blobStream.on("finish", async () => {
-                    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(blob.name)}?alt=media`;
-
-                    try {
-                        news.title = title;
-                        news.content = content;
-                        news.img = publicUrl;
-                        await news.save();
-                        return res.redirect("/admin");
-                    } catch (error) {
-                        console.error("lỗi không update dc", error);
-                        return res.status(500).send("Lỗi không update dc");
-                    }
-                });
-
-                blobStream.end(img.buffer);
-            } else {
-                try {
-                    news.title = title;
-                    news.content = content;
-                    news.img = existingImg; 
-                    await news.save();
-                    return res.redirect("/admin");
-                } catch (error) {
-                    console.error("lỗi không update dc", error);
-                    return res.status(500).send("lỗi không update dc");
-                }
-            }
-        } catch (error) {
-            console.error("Server error:", error);
-            return res.status(500).send("Server error");
+          blobStream.end(img.buffer);
+        } else {
+          try {
+            news.title = title;
+            news.content = content;
+            news.img = existingImg;
+            await news.save();
+            return res.redirect("/admin");
+          } catch (error) {
+            console.error("lỗi không update dc", error);
+            return res.status(500).send("lỗi không update dc");
+          }
         }
+      } catch (error) {
+        console.error("Server error:", error);
+        return res.status(500).send("Server error");
+      }
     });
-},
+  },
   Edit: async (req, res) => {
     const cardId = req.params.id;
     const news = await News.findOne({ where: { id: cardId } });
@@ -115,54 +117,53 @@ const NewsController = {
   },
   postCreate: async (req, res) => {
     upload.single("img")(req, res, async (err) => {
-      if (err) {
-        return res.status(500).send("uploaf file thất bại.");
-      }
-
-      const { title, content } = req.body;
-      const img = req.file;
-
-      try {
-        if (img) {
-          const blob = bucket.file(`news_web/${img.originalname}`);
-          const blobStream = blob.createWriteStream({
-            resumable: false,
-            contentType: img.mimetype,
-          });
-
-          blobStream.on("error", (err) => {
-            console.error(err);
-            return res.status(500).send("k upload được lên firebase");
-          });
-
-          blobStream.on("finish", async () => {
-            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-              bucket.name
-            }/o/${encodeURIComponent(blob.name)}?alt=media`;
-
-            try {
-              const newNews = await News.create({
-                title,
-                content,
-                img: publicUrl,
-              });
-              res.redirect("/admin");
-            } catch (error) {
-              console.error("tạo bài báo thất bại", error);
-              res.status(500).send("tạo bài báo thất bại");
-            }
-          });
-
-          blobStream.end(img.buffer);
-        } else {
-          res.status(400).send("không có file upload");
+        if (err) {
+            return res.status(401).json({ error: "uploadfile thất bại" });
         }
-      } catch (error) {
-        console.error("Server error:", error);
-        res.status(500).send("Server error");
-      }
+
+        const { title, content } = req.body;
+        const img = req.file;
+
+        try {
+            if (img) {
+                const blob = bucket.file(`news_web/${img.originalname}`);
+                const blobStream = blob.createWriteStream({
+                    resumable: false,
+                    contentType: img.mimetype,
+                });
+
+                blobStream.on("error", (err) => {
+                    console.error(err);
+                    return res.status(401).json({ error: "không upload được file lên firebase" });
+                });
+
+                blobStream.on("finish", async () => {
+                    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(blob.name)}?alt=media`;
+
+                    try {
+                        const newNews = await News.create({
+                            title,
+                            content,
+                            img: publicUrl,
+                        });
+                        res.redirect("/admin");
+                    } catch (error) {
+                        console.error("tạo bài báo thất bại", error);
+                        return res.status(401).json({ error: "Tạo bài thất bại" });
+                    }
+                });
+
+                blobStream.end(img.buffer);
+            } else {
+                return res.status(401).json({ error: "Không có file upload" });
+            }
+        } catch (error) {
+            console.error("Server error:", error);
+            res.status(500).send("Server error");
+        }
     });
-  },
+},
+
   GetAll: async (req, res) => {
     try {
       const listnews = await News.findAll();

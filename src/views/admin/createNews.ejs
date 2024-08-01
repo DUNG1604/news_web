@@ -1,15 +1,16 @@
 <div class="container mt-5">
-  <form id="create_news" action="/admin/create" method="POST" enctype="multipart/form-data">
+  <form id="create_news" enctype="multipart/form-data">
     <div class="mb-3">
       <label for="title" class="form-label fw-bold">Tiêu đề:</label>
-      <input type="text" id="title" name="title" class="form-control">
+      <input required type="text" id="title" name="title" class="form-control">
     </div>
     <div class="mb-3">
       <label for="img" class="form-label fw-bold">Ảnh bìa:</label>
       <input type="file" id="img" name="img" class="form-control" accept="image/*" onchange="previewImage(event)">
+      <div id="error-message" style="color: red; margin-bottom: 20px;"></div>
     </div>
     <div class="mb-3">
-      <img id="preview" src="<%= img ? img : '' %>" style="display: block; width: 200px; height: 300px; border: 2px solid #ddd; margin-top: 10px; object-fit: cover;" />
+      <img id="preview" src="" style="display: none; width: 200px; height: 300px; border: 2px solid #ddd; margin-top: 10px; object-fit: cover;" />
     </div>
     <div class="mb-3">
       <label for="editor1" class="form-label fw-bold">Nội dung:</label>
@@ -32,9 +33,25 @@
       reader.readAsDataURL(file);
     }
   });
-  // $('#create_news').on('submit', function(e){
-  //   e.preventDefault();
 
-  // })
-
+  $('#create_news').on('submit', function(e){
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    $.ajax({
+      url: '/admin/create',
+      type: 'POST',
+      data: formData,
+      processData: false,  // Required
+      contentType: false,  // Required
+      success: function(data){
+        console.log('thành công', data);
+        window.location.href = '/admin';
+      },
+      error: function(xhr){
+        const err = xhr.responseJSON ? xhr.responseJSON.error : 'Đã xảy ra lỗi';
+        $('#error-message').text(err);
+      }
+    });
+  });
 </script>

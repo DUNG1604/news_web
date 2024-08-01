@@ -5,6 +5,7 @@ const accessTokenSecret =
 
 let isAuth = async (req, res, next) => {
   const tokenFromClient = req.cookies.accessToken;
+  console.log("token auth ", tokenFromClient);
   if (tokenFromClient) {
     try {
       const decoded = await jwtHelper.verifyToken(
@@ -31,7 +32,7 @@ let isAuth = async (req, res, next) => {
             );
             const userData = decode;
             const accessToken = await jwtHelper.generateToken(
-              userData,
+              userData.data,
               accessTokenSecret,
               accessTokenLife
             );

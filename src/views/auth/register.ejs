@@ -1,26 +1,94 @@
-<div class="container" style="max-width: 400px; margin-top: 100px;">
-  <h1 class="text-center" style="margin-bottom: 30px;">Đăng ký</h1>
-  <% if (typeof error !== 'undefined' && error) { %>
-    <div style="color: red; font-size: 0.875em; margin-top: 5px; margin-bottom: 5px;">
-      <%= error %>
+<div class="container" style="max-width: 400px; margin-top: 100px">
+  <h1 class="text-center" style="margin-bottom: 30px">Đăng ký</h1>
+  <form
+    id="register-form"
+    action="/register"
+    method="post"
+    style="
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #f9f9f9;
+    "
+  >
+    <div id="error-message" style="color: red; margin-bottom: 20px"></div>
+    <div class="form-group" style="margin-bottom: 20px">
+      <label for="username" style="font-weight: bold; margin-bottom: 10px"
+        >Tên đăng nhập:</label
+      >
+      <input
+        type="text"
+        class="form-control"
+        name="username"
+        id="username"
+        placeholder="Tên đăng nhập"
+        value="<%= typeof username !== 'undefined' ? username : '' %>"
+        required
+        style="padding: 10px; border: 1px solid #ddd; border-radius: 4px"
+      />
     </div>
-  <% } %>
-  <form action="/register" method="post" style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; background-color: #f9f9f9;">
-    <div class="form-group" style="margin-bottom: 20px;">
-      <label for="username" style="font-weight: bold; margin-bottom: 10px;">Tên đăng nhập:</label>
-      <input type="text" class="form-control" name="username" id="username" placeholder="Tên đăng nhập" value="<%= typeof username !== 'undefined' ? username : '' %>" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    <div class="form-group" style="margin-bottom: 20px">
+      <label for="password" style="font-weight: bold; margin-bottom: 10px"
+        >Mật khẩu:</label
+      >
+      <input
+        type="password"
+        class="form-control"
+        name="password"
+        id="password"
+        placeholder="Mật khẩu"
+        required
+        style="padding: 10px; border: 1px solid #ddd; border-radius: 4px"
+      />
     </div>
-    <div class="form-group" style="margin-bottom: 20px;">
-      <label for="password" style="font-weight: bold; margin-bottom: 10px;">Mật khẩu:</label>
-      <input type="password" class="form-control" name="password" id="password" placeholder="Mật khẩu" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    <div class="form-group" style="margin-bottom: 20px">
+      <label
+        for="confirmPassword"
+        style="font-weight: bold; margin-bottom: 10px"
+        >Nhập lại mật khẩu:</label
+      >
+      <input
+        type="password"
+        class="form-control"
+        name="confirmPassword"
+        id="confirmPassword"
+        placeholder="Nhập lại mật khẩu"
+        required
+        style="padding: 10px; border: 1px solid #ddd; border-radius: 4px"
+      />
     </div>
-    <div class="form-group" style="margin-bottom: 20px;">
-      <label for="confirmPassword" style="font-weight: bold; margin-bottom: 10px;">Nhập lại mật khẩu:</label>
-      <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Nhập lại mật khẩu" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-    </div>
-    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; font-size: 16px; border-radius: 4px;">Đăng ký</button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      style="width: 100%; padding: 10px; font-size: 16px; border-radius: 4px"
+    >
+      Đăng ký
+    </button>
   </form>
-  <p class="text-center" style="margin-top: 20px;">
-    Đã có tài khoản? <a href="/login" style="color: #007bff; text-decoration: none;">Đăng nhập</a>
+  <p class="text-center" style="margin-top: 20px">
+    Đã có tài khoản?
+    <a href="/login" style="color: #007bff; text-decoration: none">Đăng nhập</a>
   </p>
 </div>
+
+<script>
+  $("#register-form").on("submit", function (e) {
+    e.preventDefault();
+    const username = $("#username").val();
+    const password = $("#password").val();
+    const confirmPassword = $("#confirmPassword").val();
+    $.ajax({
+      url: "/register",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ username, password, confirmPassword }),
+      success: function (data) {
+        window.location.href = '/login';
+      },
+      error: function (xhr) {
+        const err = xhr.responseJSON.error;
+        $("#error-message").text(err);
+      },
+    });
+  });
+</script>

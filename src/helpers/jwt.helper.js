@@ -30,7 +30,7 @@ let verifyToken = (token, secretKey) => {
         if (error.name === 'TokenExpiredError') {
           return reject({ message: "token hết hạn" });
         }
-        return reject({ message: "token không hợp lệ" });
+        return reject({ message: "token không hợp lệ ở verify" });
       }
       resolve(decoded);
     });

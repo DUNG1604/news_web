@@ -12,7 +12,7 @@ let isAuth = async (req, res, next) => {
         accessTokenSecret
       );
       req.jwtDecoded = decoded;
-      console.log("Đã xác thực", req.jwtDecoded);
+      console.log("Đã xác thực isAuth", req.jwtDecoded);
       next();
     } catch (error) {
       if (error.message === "token hết hạn") {
@@ -29,7 +29,7 @@ let isAuth = async (req, res, next) => {
               refreshToken,
               refreshTokenSecret
             );
-            const userData = decode.data;
+            const userData = decode;
             const accessToken = await jwtHelper.generateToken(
               userData,
               accessTokenSecret,
@@ -39,20 +39,18 @@ let isAuth = async (req, res, next) => {
               // httpOnly: true,
               maxAge: 1000 * 60 * 60,
             });
+            req.jwtDecoded = userData;
             console.log("đã tạo token mới");
             console.log("Đã xác thực sau khi tạo");
+            console.log("data mới isAuth", userData);
             next();
           } catch (error) {
             return res.send("không refresh được");
           }
         }
       } else {
-        res.cookie("accessToken", "", { expires: new Date(0), httpOnly: true });
-        res.cookie("refreshToken", "", {
-          expires: new Date(0),
-          // httpOnly: true,
-        });
-        res.redirect("/login");
+        console.log(error.message);
+        return res.status(403).send(error.message);
       }
     }
   } else {
@@ -63,13 +61,15 @@ let isAuth = async (req, res, next) => {
 };
 
 let isAdmin = async (req, res, next) => {
+  console.log("data isAdmin", req.jwtDecoded);
   try {
-    const tokenFromClient = req.cookies.accessToken;
-    const decoded = await jwtHelper.verifyToken(
-      tokenFromClient,
-      accessTokenSecret
-    );
-    req.jwtDecoded = decoded;
+    // const tokenFromClient = req.cookies.accessToken;
+    // const decoded = await jwtHelper.verifyToken(
+    //   tokenFromClient,
+    //   accessTokenSecret
+    // );
+    // req.jwtDecoded = decoded;
+    console.log("đã xác thực isAdmin: ", req.jwtDecoded.data.role);
     if (req.jwtDecoded.data.role !== "admin") {
       return res.status(403).json({
         message: "Chỉ dành cho admin.",
@@ -77,6 +77,7 @@ let isAdmin = async (req, res, next) => {
     }
     next();
   } catch (error) {
+    console.log("không phải admin")
     res.cookie("accessToken", "", { expires: new Date(0)});
     res.cookie("refreshToken", "", { expires: new Date(0)});
     res.redirect("/login");

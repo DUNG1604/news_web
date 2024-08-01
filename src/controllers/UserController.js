@@ -22,27 +22,21 @@ const LoginController = {
     const { username, password, confirmPassword } = req.body;
 
     if (password !== confirmPassword) {
-      return res.render("register", {
-        error: "Mật khẩu không khớp",
-        username,
-        password,
-        confirmPassword,
-      });
+      return res
+          .status(401)
+          .json({ error: "Mật khẩu không khớp"});
     }
 
     try {
       const checkUsername = await User.findOne({ where: { username } });
+      console.log(checkUsername)
       if (checkUsername) {
-        return res.render("register", {
-          error: "Tên đăng nhập đã tồn tại",
-          username,
-          password,
-          confirmPassword,
-        });
+        return res
+          .status(401)
+          .json({ error: "Tên đăng nhập đã tồn tại" });
       }
-
       const newUser = await User.create({ username, password });
-      res.redirect("/login");
+      res.status(200).json({ message: "Đăng nhập thành công" });
     } catch (error) {
       res.status(500).send("Lỗi server");
     }

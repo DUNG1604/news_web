@@ -36,14 +36,17 @@
 
   $('#create_news').on('submit', function(e){
     e.preventDefault();
+
+    const content = CKEDITOR.instances.editor1.getData();
     const formData = new FormData(this);
+    formData.append('content1', content);
     
     $.ajax({
       url: '/admin/create',
       type: 'POST',
       data: formData,
-      processData: false,  // Required
-      contentType: false,  // Required
+      processData: false,  // Ngăn jQuery xử lý dữ liệu
+      contentType: false,  // Ngăn jQuery đặt bất kỳ Content-Type nào
       success: function(data){
         console.log('thành công', data);
         window.location.href = '/admin';
@@ -54,4 +57,5 @@
       }
     });
   });
+
 </script>

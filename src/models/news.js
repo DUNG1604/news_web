@@ -4,9 +4,9 @@ const User = require('./user');
 
 const News = sequelize.define('News', {
   id: {
-    // type: DataTypes.UUID,
-    // defaultValue: DataTypes.UUIDV4,
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    // type: DataTypes.INTEGER,
     primaryKey: true
   },
   title: {

@@ -121,7 +121,7 @@ const NewsController = {
             return res.status(401).json({ error: "uploadfile thất bại" });
         }
 
-        const { title, content } = req.body;
+        const { title, content1 } = req.body;
         const img = req.file;
 
         try {
@@ -143,7 +143,7 @@ const NewsController = {
                     try {
                         const newNews = await News.create({
                             title,
-                            content,
+                            content:content1,
                             img: publicUrl,
                         });
                         res.redirect("/admin");

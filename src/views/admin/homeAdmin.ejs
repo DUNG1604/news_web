@@ -1,9 +1,9 @@
 <div class="container mt-5">
-  <div style="display: flex;">
+  <div style="display: flex">
     <a
       href="/admin/create"
       class="btn btn-primary"
-      style="margin-top: auto; margin-right: 10px; margin-bottom: 10px;"
+      style="margin-top: auto; margin-right: 10px; margin-bottom: 10px"
       >Thêm bài viết</a
     >
   </div>
@@ -49,29 +49,68 @@
             <%= card.title %>
           </h5>
           <!-- <p class="card-text"><%= card.text %></p> -->
-          <div style="display: flex; justify-content: space-between;">
+          <div style="display: flex; justify-content: space-between">
             <a
               href="/admin/update/<%= card.id %>"
               class="btn btn-primary"
-              style="margin-top: auto; width: 45%;"
+              style="margin-top: auto; width: 45%"
               >Sửa</a
             >
-            <form 
-              style="width: 45%;"
-              action="/admin/delete/<%= card.id %>"
-              method="POST"
-              enctype="multipart/form-data"
-            >
-              <button style="width: 100%;" type="submit" class="btn btn-danger">Xóa</button>
-            </form>
+            <div style="width: 45%">
+              <button
+                style="width: 100%"
+                type="button"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                Xóa
+              </button>
+            </div>
           </div>
           <div>
             <a
               href="/admin/<%= card.id %>"
               class="btn btn-secondary"
-              style="margin-top: auto; width: 100%; margin-top: 5px;"
+              style="margin-top: auto; width: 100%; margin-top: 5px"
               >Xem chi tiết</a
             >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Bạn muốn xóa bài viết chứ!
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body"><%- card.title %></div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Đóng
+            </button>
+            <button data-id="<%= card.id %>" id="deleteNews" type="button" class="btn btn-danger">
+              Xóa
+            </button>
           </div>
         </div>
       </div>
@@ -79,3 +118,19 @@
     <% }) %>
   </div>
 </div>
+<script>
+  $("#deleteNews").on("click", function (e) {
+    e.preventDefault();
+    const newsId = this.getAttribute('data-id');
+    $.ajax({
+      url: `/admin/delete/${newsId}`,
+      type: 'POST',
+      success: function(data){
+        window.location.href = '/admin';
+      },
+      error: function(xhr){
+        console.log(xhr);
+      }
+    })
+  });
+</script>

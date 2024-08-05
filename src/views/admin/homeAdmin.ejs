@@ -1,5 +1,17 @@
 <div class="container mt-5">
-  <div style="display: flex">
+  <form class="d-flex">
+    <input
+      class="searchInput form-control me-2"
+      name="search"
+      type="search"
+      placeholder="Tìm kiếm"
+      aria-label="Search"
+    />
+    <button class="searchBtn btn btn-outline-success" type="submit">
+      Search
+    </button>
+  </form>
+  <div style="display: flex; margin-top: 10px">
     <a
       href="/admin/create"
       class="btn btn-primary"
@@ -7,130 +19,221 @@
       >Thêm bài viết</a
     >
   </div>
-  <div class="row">
-    <% listnews.forEach(card => { %>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card" style="width: 100%">
-        <div style="position: relative; width: 100%; padding-top: 75%">
-          <img
-            src="<%= card.img %>"
-            class="card-img-top"
-            style="
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            "
-          />
-        </div>
-        <div
-          class="card-body"
+  <table class="table table-bordered">
+    <thead>
+      <tr style="text-align: center">
+        <th>STT</th>
+        <th>Tên bài</th>
+        <th>Ảnh bìa</th>
+        <th>Nội dung</th>
+        <th>Chỉnh sửa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% listnews.forEach((card, index) => { %>
+      <tr>
+        <td style="vertical-align: middle; width: 50px; text-align: center">
+          <%= index + 1 %>
+        </td>
+        <td
           style="
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 6.4em;
+            line-height: 1.5em;
+            width: 180px;
           "
         >
-          <h5
-            class="card-title"
-            style="
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              min-height: 3em;
-              max-height: 3em;
-              line-height: 1.5em;
-            "
-          >
-            <%= card.title %>
-          </h5>
-          <!-- <p class="card-text"><%= card.text %></p> -->
-          <div style="display: flex; justify-content: space-between">
+          <%- card.title %>
+        </td>
+        <td style="vertical-align: middle; width: 100px">
+          <img
+            src="<%= card.img %>"
+            alt="Image"
+            style="width: 100px; height: 100px; object-fit: cover"
+          />
+        </td>
+        <td
+          style="
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 6.4em;
+            line-height: 1.5em;
+            width: 643px;
+          "
+        >
+          <div><%- card.content %></div>
+        </td>
+        <td style="vertical-align: middle; text-align: center; width: 280px">
+          <div style="display: flex; justify-content: center; gap: 5px">
             <a
               href="/admin/update/<%= card.id %>"
               class="btn btn-primary"
-              style="margin-top: auto; width: 45%"
-              >Sửa</a
+              style=""
             >
-            <div style="width: 45%">
+              Sửa
+            </a>
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#modal<%= card.id %>"
+              style=""
+            >
+              Xóa
+            </button>
+            <a href="/admin/<%= card.id %>" class="btn btn-secondary" style="">
+              Xem chi tiết
+            </a>
+          </div>
+        </td>
+      </tr>
+      <div
+        class="modal fade"
+        id="modal<%= card.id %>"
+        tabindex="-1"
+        aria-labelledby="modalLabel<%= card.id %>"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel<%= card.id %>">
+                Bạn muốn xóa bài viết chứ!
+              </h5>
               <button
-                style="width: 100%"
                 type="button"
-                class="btn btn-danger"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body"><%- card.title %></div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Đóng
+              </button>
+              <button
+                data-id="<%= card.id %>"
+                type="button"
+                class="btn btn-danger deleteNewsButton"
               >
                 Xóa
               </button>
             </div>
           </div>
-          <div>
-            <a
-              href="/admin/<%= card.id %>"
-              class="btn btn-secondary"
-              style="margin-top: auto; width: 100%; margin-top: 5px"
-              >Xem chi tiết</a
-            >
-          </div>
         </div>
       </div>
-    </div>
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
-              Bạn muốn xóa bài viết chứ!
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body"><%- card.title %></div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Đóng
-            </button>
-            <button data-id="<%= card.id %>" id="deleteNews" type="button" class="btn btn-danger">
-              Xóa
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <% }) %>
-  </div>
+      <% }) %>
+    </tbody>
+  </table>
 </div>
 <script>
-  $("#deleteNews").on("click", function (e) {
-    e.preventDefault();
-    const newsId = this.getAttribute('data-id');
-    $.ajax({
-      url: `/admin/delete/${newsId}`,
-      type: 'POST',
-      success: function(data){
-        window.location.href = '/admin';
-      },
-      error: function(xhr){
-        console.log(xhr);
-      }
-    })
+  $(document).ready(function () {
+    $(document).on("click", ".searchBtn", function (e) {
+      e.preventDefault();
+      const search = $(".searchInput").val();
+      $.ajax({
+        url: "/admin/search",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ search }),
+        success: function (data) {
+          renderNews(data);
+        },
+        error: function (xhr) {
+          console.log(xhr);
+        },
+      });
+    });
+
+    function renderNews(newsList) {
+      const tbody = $("table tbody");
+      tbody.empty();
+      newsList.forEach((news, index) => {
+        tbody.append(`
+          <tr>
+            <td style="vertical-align: middle; width: 50px; text-align: center;">
+              ${index + 1}
+            </td>
+            <td style="
+              display: -webkit-box;
+              -webkit-line-clamp: 4;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              max-height: 6.4em;
+              line-height: 1.5em;
+              width: 180px;
+            ">
+              ${news.title}
+            </td>
+            <td style="vertical-align: middle; width: 100px;">
+              <img src="${
+                news.img
+              }" alt="Image" style="width: 100px; height: 100px; object-fit: cover;" />
+            </td>
+            <td style="
+              display: -webkit-box;
+              -webkit-line-clamp: 4;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              max-height: 6.4em;
+              line-height: 1.5em;
+              width: 643px;
+            ">
+              <div>${news.content}</div>
+            </td>
+            <td style="vertical-align: middle; text-align: center; width: 280px;">
+              <div style="display: flex; justify-content: center; gap: 5px;">
+                <a href="/admin/update/${
+                  news.id
+                }" class="btn btn-primary">Sửa</a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal${
+                  news.id
+                }">Xóa</button>
+                <a href="/admin/${
+                  news.id
+                }" class="btn btn-secondary">Xem chi tiết</a>
+              </div>
+            </td>
+          </tr>
+          <div class="modal fade" id="modal${
+            news.id
+          }" tabindex="-1" aria-labelledby="modalLabel${
+          news.id
+        }" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalLabel${
+                    news.id
+                  }">Bạn muốn xóa bài viết chứ!</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">${news.title}</div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                  <button data-id="${
+                    news.id
+                  }" type="button" class="btn btn-danger deleteNewsButton">Xóa</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `);
+      });
+    }
   });
 </script>

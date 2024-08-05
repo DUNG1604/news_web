@@ -5,8 +5,21 @@ const { format } = require("util");
 const path = require("path");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+const { Op } = require('sequelize');
 
 const NewsController = {
+  Search: async (req, res) => {
+    const { search } = req.body;
+    const results = await News.findAll({
+      where: {
+        title: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+    });
+    const data = results.map(news => news.dataValues);
+    return res.status(200).json(data);
+  },
   Delete: async (req, res) => {
     const newsId = req.params.id;
     await News.destroy({ where: { id: newsId } });
@@ -117,52 +130,56 @@ const NewsController = {
   },
   postCreate: async (req, res) => {
     upload.single("img")(req, res, async (err) => {
-        if (err) {
-            return res.status(401).json({ error: "uploadfile thất bại" });
-        }
+      if (err) {
+        return res.status(401).json({ error: "uploadfile thất bại" });
+      }
 
-        const { title, content1 } = req.body;
-        const img = req.file;
+      const { title, content1 } = req.body;
+      const img = req.file;
 
-        try {
-            if (img) {
-                const blob = bucket.file(`news_web/${img.originalname}`);
-                const blobStream = blob.createWriteStream({
-                    resumable: false,
-                    contentType: img.mimetype,
-                });
+      try {
+        if (img) {
+          const blob = bucket.file(`news_web/${img.originalname}`);
+          const blobStream = blob.createWriteStream({
+            resumable: false,
+            contentType: img.mimetype,
+          });
 
-                blobStream.on("error", (err) => {
-                    console.error(err);
-                    return res.status(401).json({ error: "không upload được file lên firebase" });
-                });
+          blobStream.on("error", (err) => {
+            console.error(err);
+            return res
+              .status(401)
+              .json({ error: "không upload được file lên firebase" });
+          });
 
-                blobStream.on("finish", async () => {
-                    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(blob.name)}?alt=media`;
+          blobStream.on("finish", async () => {
+            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
+              bucket.name
+            }/o/${encodeURIComponent(blob.name)}?alt=media`;
 
-                    try {
-                        const newNews = await News.create({
-                            title,
-                            content:content1,
-                            img: publicUrl,
-                        });
-                        res.redirect("/admin");
-                    } catch (error) {
-                        console.error("tạo bài báo thất bại", error);
-                        return res.status(401).json({ error: "Tạo bài thất bại" });
-                    }
-                });
-
-                blobStream.end(img.buffer);
-            } else {
-                return res.status(401).json({ error: "Không có file upload" });
+            try {
+              const newNews = await News.create({
+                title,
+                content: content1,
+                img: publicUrl,
+              });
+              res.redirect("/admin");
+            } catch (error) {
+              console.error("tạo bài báo thất bại", error);
+              return res.status(401).json({ error: "Tạo bài thất bại" });
             }
-        } catch (error) {
-            console.error("Server error:", error);
-            res.status(500).send("Server error");
+          });
+
+          blobStream.end(img.buffer);
+        } else {
+          return res.status(401).json({ error: "Không có file upload" });
         }
+      } catch (error) {
+        console.error("Server error:", error);
+        res.status(500).send("Server error");
+      }
     });
-},
+  },
 
   GetAll: async (req, res) => {
     try {

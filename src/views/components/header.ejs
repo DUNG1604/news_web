@@ -14,7 +14,8 @@
     class="container-fluid"
     style="display: flex; justify-content: space-between; align-items: center"
   >
-    <div style="font-size: 1.5rem; font-weight: bold">NEWS</div>
+    <div id="logo-button"></div>
+    <!-- <div style="font-size: 1.5rem; font-weight: bold">NEWS</div> -->
     <div id="auth-buttons" style="display: flex; gap: 10px"></div>
   </div>
 </header>
@@ -23,7 +24,9 @@
 <script>
   $(document).ready(function() {
     const $authButtons = $("#auth-buttons");
+    const $logoButton = $("#logo-button");
     const username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
     const accessToken = getCookie("accessToken");
 
     function updateAuthButtons() {
@@ -43,14 +46,25 @@
         `);
         localStorage.removeItem("username");
       }
-    }
+    };
+    function updateLogoButtons() {
+      if (role === 'admin'){
+        $logoButton.html(`
+          <a href="/admin" style="font-size: 1.5rem; font-weight: bold; color: inherit; text-decoration: none;">NEWS</a>
+        `);
+      }else (
+        $logoButton.html(`
+          <a href="/" style="font-size: 1.5rem; font-weight: bold; color: inherit; text-decoration: none;">NEWS</a>
+        `)
+      )
+    };
 
     function getCookie(name) {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
       if (parts.length === 2) return parts.pop().split(";").shift();
-    }
-
+    };
+    updateLogoButtons();
     updateAuthButtons();
 
     $(document).on("click", "#logout-button", function () {
@@ -61,6 +75,7 @@
         success: function (data) {
           console.log("Đăng xuất thành công");
           localStorage.removeItem("username");
+          localStorage.removeItem("role");
           document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
           window.location.href = "/login";
         },

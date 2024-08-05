@@ -5,6 +5,7 @@ const NewsController = require("../controllers/NewsController");
 const MainController = require("../controllers/MainController");
 
 const router = (app) => {
+  app.post("/search", NewsController.Search);
   app.post("/logout", UserController.Logout);
   app.post("/register", UserController.postRegister);
   app.get("/register", UserController.Register);

@@ -1,29 +1,137 @@
 <div class="container mt-5">
-    <div class="row">
-      <% listnews.forEach(card => { %>
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-          <div class="card" style="width: 100%;">
-            <div style="position: relative; width: 100%; padding-top: 75%;">
-              <img src="<%= card.img %>" class="card-img-top" 
-                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-            </div>
-            <div class="card-body" style="display: flex; flex-direction: column; justify-content: space-between;">
-              <h5 class="card-title" 
-                  style="display: -webkit-box; 
-                         -webkit-line-clamp: 2; 
-                         -webkit-box-orient: vertical; 
-                         overflow: hidden; 
-                         text-overflow: ellipsis; 
-                         min-height: 3em; 
-                         max-height: 3em; 
-                         line-height: 1.5em;">
-                <%= card.title %>
-              </h5>
-              <!-- <p class="card-text"><%= card.text %></p> -->
-              <a href="/<%= card.id %>" class="btn btn-primary" style="margin-top: auto;">Xem chi tiết</a>
+  <!-- <form class="d-flex">
+    <input
+      class="searchInput form-control me-2"
+      name="search"
+      type="search"
+      placeholder="Tìm kiếm"
+      aria-label="Search"
+    />
+    <button class="searchBtn btn btn-outline-success" type="submit">
+      Search
+    </button>
+  </form> -->
+  <div style="margin-top: 10px;" class="row">
+    <% listnews.forEach(card => { %>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+      <div class="card" style="width: 100%">
+        <div style="position: relative; width: 100%; padding-top: 75%">
+          <img
+            src="<%= card.img %>"
+            class="card-img-top"
+            style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            "
+          />
+        </div>
+        <div
+          class="card-body"
+          style="
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+          "
+        >
+          <h5
+            class="card-title"
+            style="
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              min-height: 3em;
+              max-height: 3em;
+              line-height: 1.5em;
+            "
+          >
+            <%= card.title %>
+          </h5>
+          <!-- <p class="card-text"><%= card.text %></p> -->
+          <a
+            href="/<%= card.id %>"
+            class="btn btn-primary"
+            style="margin-top: auto"
+            >Xem chi tiết</a
+          >
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+
+    $(document).on("click", ".searchBtn", function (e) {
+      e.preventDefault(); 
+
+      const search = $(".searchInput").val();
+      $.ajax({
+        url: "/search",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ search }),
+        success: function (data) {
+          renderNews(data); 
+        },
+        error: function (xhr) {
+          console.log("Có lỗi xảy ra:", xhr);
+        },
+      });
+    });
+    function renderNews(newsList) {
+      const tbody = $("table tbody");
+      tbody.empty(); 
+      newsList.forEach((news, index) => {
+        tbody.append(`
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card" style="width: 100%">
+              <div style="position: relative; width: 100%; padding-top: 75%">
+                <img
+                  src="${card.img}"
+                  class="card-img-top"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                />
+              </div>
+              <div
+                class="card-body"
+                style="display: flex; flex-direction: column; justify-content: space-between;"
+              >
+                <h5
+                  class="card-title"
+                  style="
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    min-height: 3em;
+                    max-height: 3em;
+                    line-height: 1.5em;
+                  "
+                >
+                  ${card.title}
+                </h5>
+                <a
+                  href="/${card.id}"
+                  class="btn btn-primary"
+                  style="margin-top: auto"
+                >
+                  Xem chi tiết
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      <% }) %>
-    </div>
-  </div>
+        `);
+      });
+    }
+  });
+</script>
+
+

@@ -9,6 +9,7 @@ const AuthMiddleware = require("../middleware/AuthMiddleware");
 const router = express.Router();
 router.use(AuthMiddleware.isAuth,);
 router.use(AuthMiddleware.isAdmin);
+router.post("/search",NewsController.Search);
 router.post("/delete/:id",NewsController.Delete);
 router.post("/update/:id",NewsController.postUpdate);
 router.get("/update/:id",NewsController.Edit);

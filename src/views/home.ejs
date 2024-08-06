@@ -1,5 +1,5 @@
 <div class="container mt-5">
-  <!-- <form class="d-flex">
+  <form class="d-flex">
     <input
       class="searchInput form-control me-2"
       name="search"
@@ -10,8 +10,8 @@
     <button class="searchBtn btn btn-outline-success" type="submit">
       Search
     </button>
-  </form> -->
-  <div style="margin-top: 10px;" class="row">
+  </form>
+  <div style="margin-top: 10px;" class="row list-news">
     <% listnews.forEach(card => { %>
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
       <div class="card" style="width: 100%">
@@ -79,6 +79,7 @@
         data: JSON.stringify({ search }),
         success: function (data) {
           renderNews(data); 
+          console.log("search user: ", data);
         },
         error: function (xhr) {
           console.log("Có lỗi xảy ra:", xhr);
@@ -86,9 +87,9 @@
       });
     });
     function renderNews(newsList) {
-      const tbody = $("table tbody");
+      const tbody = $(".list-news");
       tbody.empty(); 
-      newsList.forEach((news, index) => {
+      newsList.forEach((card, index) => {
         tbody.append(`
           <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <div class="card" style="width: 100%">

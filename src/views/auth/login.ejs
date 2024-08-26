@@ -63,10 +63,14 @@
         if (data.data.role === "user") {
           window.location.href = "/";
         }
+        if (data.data.role === "author") {
+          window.location.href = "/author";
+        }
         if (data.data.role === "admin") {
           window.location.href = "/admin";
         }
         localStorage.setItem("username", data.data.username);
+        localStorage.setItem("userId", data.data.id);
       },
       error: function (xhr) {
         const err = xhr.responseJSON.error;

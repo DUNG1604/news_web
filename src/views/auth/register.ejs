@@ -57,6 +57,15 @@
         style="padding: 10px; border: 1px solid #ddd; border-radius: 4px"
       />
     </div>
+    <div class="form-group" style="margin-bottom: 20px">
+      <label for="userType" style="font-weight: bold; margin-bottom: 10px"
+        >Loại người dùng:</label
+      >
+      <select id="role" name="role" class="form-control" required style="padding: 10px; border: 1px solid #ddd; border-radius: 4px">
+        <option value="reader">Người đọc</option>
+        <option value="author">Người viết bài</option>
+      </select>
+    </div>
     <button
       type="submit"
       class="btn btn-primary"
@@ -77,11 +86,12 @@
     const username = $("#username").val();
     const password = $("#password").val();
     const confirmPassword = $("#confirmPassword").val();
+    const role = $("#role").val();
     $.ajax({
       url: "/register",
       type: "POST",
       contentType: "application/json",
-      data: JSON.stringify({ username, password, confirmPassword }),
+      data: JSON.stringify({ username, password, confirmPassword, role }),
       success: function (data) {
         window.location.href = '/login';
       },

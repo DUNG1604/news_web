@@ -1,16 +1,20 @@
 const LoginRouter = require("./UserRouter");
 const AdminRouter = require("./AdminRouter");
+const AuthorRouter = require("./AuthorRouter");
 const UserController = require("../controllers/UserController");
 const NewsController = require("../controllers/NewsController");
 const MainController = require("../controllers/MainController");
 
 const router = (app) => {
+
+  app.post("/like", NewsController.Like);
   app.post("/search", NewsController.Search);
   app.post("/logout", UserController.Logout);
   app.post("/register", UserController.postRegister);
   app.get("/register", UserController.Register);
   app.post("/login", UserController.postLogin);
   app.get("/login", UserController.Login);
+  app.use("/author", AuthorRouter);
   app.use("/user", LoginRouter);
   app.use("/admin", AdminRouter);
   app.get("/:id", NewsController.DetailUser);

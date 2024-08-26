@@ -55,9 +55,7 @@ let isAuth = async (req, res, next) => {
       }
     }
   } else {
-    return res.status(403).send({
-      message: "Không có token",
-    });
+    res.redirect("/login");
   }
 };
 
@@ -85,7 +83,32 @@ let isAdmin = async (req, res, next) => {
   }
 };
 
+let isAuthor = async (req, res, next) => {
+  console.log("data isAuthor", req.jwtDecoded);
+  try {
+    // const tokenFromClient = req.cookies.accessToken;
+    // const decoded = await jwtHelper.verifyToken(
+    //   tokenFromClient,
+    //   accessTokenSecret
+    // );
+    // req.jwtDecoded = decoded;
+    console.log("đã xác thực isAuthor: ", req.jwtDecoded.data.role);
+    if (req.jwtDecoded.data.role !== "author") {
+      return res.status(403).json({
+        message: "Chỉ dành cho author.",
+      });
+    }
+    next();
+  } catch (error) {
+    console.log("không phải author")
+    res.cookie("accessToken", "", { expires: new Date(0)});
+    res.cookie("refreshToken", "", { expires: new Date(0)});
+    res.redirect("/login");
+  }
+};
+
 module.exports = {
   isAuth: isAuth,
   isAdmin: isAdmin,
+  isAuthor: isAuthor,
 };

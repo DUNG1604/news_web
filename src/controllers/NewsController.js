@@ -5,9 +5,20 @@ const { format } = require("util");
 const path = require("path");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
+const jwtHelper = require("../helpers/jwt.helper");
+const Like = require("../models/like_post");
 
 const NewsController = {
+  Like: async (req, res) =>{
+    try {
+      const likePost = await Like.create({});
+      return res.status(200).send("đã like");
+    } catch (error) {
+      return res.status(401).send("server err");
+    }
+
+  },
   Search: async (req, res) => {
     const { search } = req.body;
     const results = await News.findAll({
@@ -17,13 +28,13 @@ const NewsController = {
         },
       },
     });
-    const data = results.map(news => news.dataValues);
+    const data = results.map((news) => news.dataValues);
     return res.status(200).json(data);
   },
   Delete: async (req, res) => {
     const newsId = req.params.id;
     await News.destroy({ where: { id: newsId } });
-    res.redirect("/admin");
+    res.redirect("/author");
   },
   postUpdate: async (req, res) => {
     const newsId = req.params.id;
@@ -64,7 +75,7 @@ const NewsController = {
               news.content = content;
               news.img = publicUrl;
               await news.save();
-              return res.redirect("/admin");
+              return res.redirect("/author");
             } catch (error) {
               console.error("lỗi không update dc", error);
               return res.status(500).send("Lỗi không update dc");
@@ -78,7 +89,7 @@ const NewsController = {
             news.content = content;
             news.img = existingImg;
             await news.save();
-            return res.redirect("/admin");
+            return res.redirect("/author");
           } catch (error) {
             console.error("lỗi không update dc", error);
             return res.status(500).send("lỗi không update dc");
@@ -94,7 +105,7 @@ const NewsController = {
     const cardId = req.params.id;
     const news = await News.findOne({ where: { id: cardId } });
     if (news) {
-      res.render("admin/updateNews", { news: news });
+      res.render("author/updateNews", { news: news });
     } else {
       res.status(404).send("Không có bài báo");
     }
@@ -105,7 +116,7 @@ const NewsController = {
     if (news) {
       news.views = news.views + 1;
       await news.save();
-      res.render("admin/newsDetailAdmin", { news: news });
+      res.render("author/newsDetailAuthor", { news: news });
     } else {
       res.status(404).send("Không có bài báo");
     }
@@ -126,7 +137,7 @@ const NewsController = {
   },
   Create: (req, res) => {
     const img = null;
-    res.render("admin/createNews", { img });
+    res.render("author/createNews", { img });
   },
   postCreate: async (req, res) => {
     upload.single("img")(req, res, async (err) => {
@@ -134,7 +145,7 @@ const NewsController = {
         return res.status(401).json({ error: "uploadfile thất bại" });
       }
 
-      const { title, content1 } = req.body;
+      const { title, content1, category, userId } = req.body;
       const img = req.file;
 
       try {
@@ -161,9 +172,11 @@ const NewsController = {
               const newNews = await News.create({
                 title,
                 content: content1,
+                category: category,
                 img: publicUrl,
+                userId: userId,
               });
-              res.redirect("/admin");
+              res.redirect("/author");
             } catch (error) {
               console.error("tạo bài báo thất bại", error);
               return res.status(401).json({ error: "Tạo bài thất bại" });
@@ -187,6 +200,20 @@ const NewsController = {
       return res.render("admin/homeAdmin", { listnews });
     } catch (error) {
       res.status(500).send("server err");
+    }
+  },
+  GetByIdUser: async (req, res) => {
+    try {
+      const userId = req.jwtDecoded.data.id;
+      console.log("idAuthor: ", userId);
+      const listnews = await News.findAll({
+        where: {
+          userId: userId,
+        },
+      });
+      return res.render("author/homeAuthor", { listnews });
+    } catch (error) {
+      res.status(500).send("Không lấy được thông tin");
     }
   },
 };

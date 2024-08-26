@@ -19,7 +19,7 @@ const LoginController = {
 
   postRegister: async (req, res) => {
     console.log(req.body);
-    const { username, password, confirmPassword } = req.body;
+    const { username, password, confirmPassword, role } = req.body;
 
     if (password !== confirmPassword) {
       return res
@@ -35,7 +35,7 @@ const LoginController = {
           .status(401)
           .json({ error: "Tên đăng nhập đã tồn tại" });
       }
-      const newUser = await User.create({ username, password });
+      const newUser = await User.create({ username, password, role });
       res.status(200).json({ message: "Đăng nhập thành công" });
     } catch (error) {
       res.status(500).send("Lỗi server");
@@ -60,7 +60,7 @@ const LoginController = {
       const userData = {
         role: user.role,
         username: user.username,
-        _id: user._id,
+        id: user.id,
       };
       const accessTokenSecret =
         process.env.ACCESS_TOKEN_SECRET || "access-token-secret-example";

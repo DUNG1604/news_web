@@ -1,239 +1,55 @@
-<div class="container mt-5">
-  <form class="d-flex">
-    <input
-      class="searchInput form-control me-2"
-      name="search"
-      type="search"
-      placeholder="Tìm kiếm"
-      aria-label="Search"
-    />
-    <button class="searchBtn btn btn-outline-success" type="submit">
-      Search
-    </button>
-  </form>
-  <div style="display: flex; margin-top: 10px">
-    <a
-      href="/admin/create"
-      class="btn btn-primary"
-      style="margin-top: auto; margin-right: 10px; margin-bottom: 10px"
-      >Thêm bài viết</a
+<div class="container-fluid">
+  <div class="row">
+    <!-- Thanh tùy chọn bên trái -->
+    <nav
+      id="sidebarMenu"
+      class="col-md-3 col-lg-2 d-md-block bg-dark text-light sidebar"
+      style="height: 100vh; position: fixed;"
     >
-  </div>
-  <table class="table table-bordered">
-    <thead>
-      <tr style="text-align: center">
-        <th>STT</th>
-        <th>Tên bài</th>
-        <th>Ảnh bìa</th>
-        <th>Nội dung</th>
-        <th>Chỉnh sửa</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% listnews.forEach((card, index) => { %>
-      <tr>
-        <td style="vertical-align: middle; width: 50px; text-align: center">
-          <%= index + 1 %>
-        </td>
-        <td
-          style="
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-height: 6.4em;
-            line-height: 1.5em;
-            width: 180px;
-          "
-        >
-          <%- card.title %>
-        </td>
-        <td style="vertical-align: middle; width: 100px">
-          <img
-            src="<%= card.img %>"
-            alt="Image"
-            style="width: 100px; height: 100px; object-fit: cover"
-          />
-        </td>
-        <td
-          style="
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-height: 6.4em;
-            line-height: 1.5em;
-            width: 643px;
-          "
-        >
-          <div><%- card.content %></div>
-        </td>
-        <td style="vertical-align: middle; text-align: center; width: 280px">
-          <div style="display: flex; justify-content: center; gap: 5px">
+      <div class="position-sticky pt-3">
+        <h4 class="px-3">Admin</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item">
             <a
-              href="/admin/update/<%= card.id %>"
-              class="btn btn-primary"
-              style=""
+              class="nav-link active text-light"
+              aria-current="page"
+              href="/admin/manage-users"
             >
-              Sửa
+              <i class="fas fa-users"></i> Quản lý người dùng
             </a>
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-toggle="modal"
-              data-bs-target="#modal<%= card.id %>"
-              style=""
-            >
-              Xóa
-            </button>
-            <a href="/admin/<%= card.id %>" class="btn btn-secondary" style="">
-              Xem chi tiết
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/manage-authors">
+              <i class="fas fa-user-edit"></i> Quản lý bài đăng
             </a>
-          </div>
-        </td>
-      </tr>
-      <div
-        class="modal fade"
-        id="modal<%= card.id %>"
-        tabindex="-1"
-        aria-labelledby="modalLabel<%= card.id %>"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalLabel<%= card.id %>">
-                Bạn muốn xóa bài viết chứ!
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body"><%- card.title %></div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Đóng
-              </button>
-              <button
-                data-id="<%= card.id %>"
-                type="button"
-                class="btn btn-danger deleteNewsButton"
-              >
-                Xóa
-              </button>
-            </div>
-          </div>
-        </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/manage-posts">
+              <i class="fas fa-newspaper"></i> Quản lý bài viết
+            </a>
+          </li>
+        </ul>
       </div>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
-<script>
-  $(document).ready(function () {
-    $(document).on("click", ".searchBtn", function (e) {
-      e.preventDefault();
-      const search = $(".searchInput").val();
-      $.ajax({
-        url: "/admin/search",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ search }),
-        success: function (data) {
-          renderNews(data);
-        },
-        error: function (xhr) {
-          console.log(xhr);
-        },
-      });
-    });
+    </nav>
 
-    function renderNews(newsList) {
-      const tbody = $("table tbody");
-      tbody.empty();
-      newsList.forEach((news, index) => {
-        tbody.append(`
-          <tr>
-            <td style="vertical-align: middle; width: 50px; text-align: center;">
-              ${index + 1}
-            </td>
-            <td style="
-              display: -webkit-box;
-              -webkit-line-clamp: 4;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              max-height: 6.4em;
-              line-height: 1.5em;
-              width: 180px;
-            ">
-              ${news.title}
-            </td>
-            <td style="vertical-align: middle; width: 100px;">
-              <img src="${
-                news.img
-              }" alt="Image" style="width: 100px; height: 100px; object-fit: cover;" />
-            </td>
-            <td style="
-              display: -webkit-box;
-              -webkit-line-clamp: 4;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              max-height: 6.4em;
-              line-height: 1.5em;
-              width: 643px;
-            ">
-              <div>${news.content}</div>
-            </td>
-            <td style="vertical-align: middle; text-align: center; width: 280px;">
-              <div style="display: flex; justify-content: center; gap: 5px;">
-                <a href="/admin/update/${
-                  news.id
-                }" class="btn btn-primary">Sửa</a>
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal${
-                  news.id
-                }">Xóa</button>
-                <a href="/admin/${
-                  news.id
-                }" class="btn btn-secondary">Xem chi tiết</a>
-              </div>
-            </td>
-          </tr>
-          <div class="modal fade" id="modal${
-            news.id
-          }" tabindex="-1" aria-labelledby="modalLabel${
-          news.id
-        }" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="modalLabel${
-                    news.id
-                  }">Bạn muốn xóa bài viết chứ!</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">${news.title}</div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                  <button data-id="${
-                    news.id
-                  }" type="button" class="btn btn-danger deleteNewsButton">Xóa</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `);
-      });
-    }
-  });
-</script>
+    <main
+      class="col-md-9 ms-sm-auto col-lg-10 px-md-4"
+      style="margin-left: auto;"
+    >
+      <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+      >
+        <h1 class="h2">Quản lý số lượng bài đăng của các author</h1>
+      </div>
+
+      <div class="table-responsive">
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- FontAwesome for icons -->
+<script
+  src="https://kit.fontawesome.com/a076d05399.js"
+  crossorigin="anonymous"
+></script>

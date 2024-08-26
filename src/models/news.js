@@ -1,4 +1,4 @@
-const { DataTypes, INTEGER } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const { sequelize } = require("../helpers/ConnectDB");
 const User = require('./user');
 
@@ -6,7 +6,6 @@ const News = sequelize.define('News', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
-    // type: DataTypes.INTEGER,
     primaryKey: true
   },
   title: {
@@ -24,23 +23,34 @@ const News = sequelize.define('News', {
   views: {
     type: DataTypes.INTEGER,
     defaultValue: 0
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'pending'
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  },
+  category: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
-//   ,
-//   userId: {
-//     type: DataTypes.INTEGER,
-//     references: {
-//       model: User,
-//       key: 'id'
-//     }
-//   }
-// }, {
-//   tableName: 'news',
-//   timestamps: false
-// }
-}
-);
+}, {
+  tableName: 'news',
+  timestamps: false // Nếu bạn không muốn Sequelize tự động thêm `createdAt` và `updatedAt`
+});
 
-// User.hasMany(News, { foreignKey: 'userId' });
-// News.belongsTo(User, { foreignKey: 'userId' });
+// Thiết lập quan hệ
+User.hasMany(News, { foreignKey: 'userId' });
+News.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = News;

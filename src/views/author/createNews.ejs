@@ -13,6 +13,17 @@
       <img id="preview" src="" style="display: none; width: 200px; height: 300px; border: 2px solid #ddd; margin-top: 10px; object-fit: cover;" />
     </div>
     <div class="mb-3">
+      <label for="category" class="form-label fw-bold">Thể loại:</label>
+      <select id="category" name="category" class="form-control">
+        <option value="Thể Thao">Thể Thao</option>
+        <option value="Đời Sống">Đời Sống</option>
+        <option value="Giáo Dục">Giáo Dục</option>
+        <option value="Kinh Tế">Kinh Tế</option>
+        <option value="Giải Trí">Giải Trí</option>
+        <option value="Giải Trí">Xe</option>
+      </select>
+    </div>
+    <div class="mb-3">
       <label for="editor1" class="form-label fw-bold">Nội dung:</label>
       <textarea id="editor1" name="content" rows="10" cols="80" class="form-control"></textarea>
     </div>
@@ -36,20 +47,21 @@
 
   $('#create_news').on('submit', function(e){
     e.preventDefault();
-
+    const userId = localStorage.getItem("userId");
     const content = CKEDITOR.instances.editor1.getData();
     const formData = new FormData(this);
     formData.append('content1', content);
+    formData.append('userId', userId );
     
     $.ajax({
-      url: '/admin/create',
+      url: '/author/create',
       type: 'POST',
       data: formData,
       processData: false,  // Ngăn jQuery xử lý dữ liệu
       contentType: false,  // Ngăn jQuery đặt bất kỳ Content-Type nào
       success: function(data){
         console.log('thành công', data);
-        window.location.href = '/admin';
+        window.location.href = '/author';
       },
       error: function(xhr){
         const err = xhr.responseJSON ? xhr.responseJSON.error : 'Đã xảy ra lỗi';

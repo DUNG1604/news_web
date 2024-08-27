@@ -8,6 +8,7 @@ const upload = multer({ storage: storage });
 const { Op } = require("sequelize");
 const jwtHelper = require("../helpers/jwt.helper");
 const Like = require("../models/like_post");
+const User = require("../models/user");
 
 const NewsController = {
   Like: async (req, res) =>{
@@ -197,7 +198,18 @@ const NewsController = {
   GetAll: async (req, res) => {
     try {
       const listnews = await News.findAll();
-      return res.render("admin/homeAdmin", { listnews });
+      const countNews = await News.count();
+      const countUser = await User.count({
+        where: {
+          role: 'user'
+        }
+      })
+      const countAuthor = await User.count({
+        where: {
+          role: 'author'
+        }
+      })
+      return res.render("admin/homeAdmin", { listnews, countNews, countUser, countAuthor });
     } catch (error) {
       res.status(500).send("server err");
     }

@@ -12,6 +12,7 @@ router.use(AuthMiddleware.isAdmin);
 // router.get("/create",NewsController.Create);
 // router.post("/create",NewsController.postCreate);
 // router.get("/:id",NewsController.DetailAdmin);
+router.get("/manager-users",NewsController.GetAll);
 router.get("/",NewsController.GetAll);
 
 module.exports = router;

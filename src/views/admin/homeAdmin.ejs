@@ -7,13 +7,13 @@
       style="height: 100vh; position: fixed;"
     >
       <div class="position-sticky pt-3">
-        <h4 class="px-3">Admin</h4>
+        <h4 class="px-3">Trang chủ</h4>
         <ul class="nav flex-column">
           <li class="nav-item">
             <a
               class="nav-link active text-light"
               aria-current="page"
-              href="/admin/manage-users"
+              href="/admin/manager-users"
             >
               <i class="fas fa-users"></i> Quản lý người dùng
             </a>
@@ -39,10 +39,13 @@
       <div
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
       >
-        <h1 class="h2">Quản lý số lượng bài đăng của các author</h1>
+        <h1 class="h2">Quản lý thành viên</h1>
       </div>
 
       <div class="table-responsive">
+        <div>Tổng số user: <%= countUser %></div>
+        <div>Tổng số người đăng: <%= countAuthor %></div>
+        <div>Tổng số bài viết: <%= countNews %></div>
       </div>
     </main>
   </div>

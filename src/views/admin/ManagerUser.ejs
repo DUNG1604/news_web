@@ -13,13 +13,13 @@
               <a
                 class="nav-link active text-light"
                 aria-current="page"
-                href="/admin/manage-users"
+                href="/admin/manager-users"
               >
                 <i class="fas fa-users"></i> Quản lý người dùng
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-light" href="/admin/manage-authors">
+              <a class="nav-link text-light" href="/admin/manager-news">
                 <i class="fas fa-user-edit"></i> Quản lý bài đăng
               </a>
             </li>
@@ -41,9 +41,41 @@
         >
           <h1 class="h2">Quản lý user</h1>
         </div>
-  
+        <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">Danh sách User</div>
         <div class="table-responsive">
-          
+          <table>
+            <tr>
+              <th style="width: 50px; text-align: center;">STT</th>
+              <th style="width: 150px; text-align: center;">Username</th>
+              <th style="width: 190px; text-align: center;">Ngày tạo</th>
+            </tr>
+            <% listUser.forEach((user, index) => { %>
+              <tr>
+                  <td style="text-align: center;"><%= index + 1 %></td>
+                  <td style="text-align: center;"><%= user.username %></td>
+                  <td style="text-align: center;"><%= user.createAt.toLocaleString() %></td>
+              </tr>
+              <% }) %>
+          </table>
+
+          <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px; margin-top: 10px;">Danh sách Author</div>
+        <div class="table-responsive">
+          <table>
+            <tr>
+              <th style="width: 50px; text-align: center;">STT</th>
+              <th style="width: 150px; text-align: center;">Username</th>
+              <th style="width: 190px; text-align: center;">Ngày tạo</th>
+              <th style="width: 100px; text-align: center;">Số bài viết</th>
+            </tr>
+            <% listAuthor.forEach((author, index) => { %>
+              <tr>
+                  <td style="text-align: center;"><%= index + 1 %></td>
+                  <td style="text-align: center;"><%= author.username %></td>
+                  <td style="text-align: center;"><%= author.createAt.toLocaleString() %></td>
+                  <!-- <td style="text-align: center;"><%= author.newsCount %></td> -->
+              </tr>
+              <% }) %>
+          </table>
         </div>
       </main>
     </div>

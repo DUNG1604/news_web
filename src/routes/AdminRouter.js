@@ -1,5 +1,6 @@
 const express = require("express");
 const NewsController = require("../controllers/NewsController");
+const UserController = require("../controllers/UserController");
 const AuthMiddleware = require("../middleware/AuthMiddleware");
 
 const router = express.Router();
@@ -12,7 +13,8 @@ router.use(AuthMiddleware.isAdmin);
 // router.get("/create",NewsController.Create);
 // router.post("/create",NewsController.postCreate);
 // router.get("/:id",NewsController.DetailAdmin);
-router.get("/manager-users",NewsController.GetAll);
-router.get("/",NewsController.GetAll);
+router.get("/manager-users",UserController.GetAllUsers);
+router.get("/manager-news",NewsController.GetAllNews);
+router.get("/",NewsController.GetHomeAdmin);
 
 module.exports = router;

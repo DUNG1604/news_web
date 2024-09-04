@@ -195,7 +195,7 @@ const NewsController = {
     });
   },
 
-  GetAll: async (req, res) => {
+  GetHomeAdmin: async (req, res) => {
     try {
       const listnews = await News.findAll();
       const countNews = await News.count();
@@ -210,6 +210,14 @@ const NewsController = {
         }
       })
       return res.render("admin/homeAdmin", { listnews, countNews, countUser, countAuthor });
+    } catch (error) {
+      res.status(500).send("server err");
+    }
+  },
+  GetAllNews: async (req, res) => {
+    try {
+      const listnews = await News.findAll();
+      return res.render("admin/ManagerNews", { listnews });
     } catch (error) {
       res.status(500).send("server err");
     }

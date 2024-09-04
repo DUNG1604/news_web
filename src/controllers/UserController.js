@@ -4,6 +4,33 @@ const User = require("../models/user");
 const News = require("../models/news");
 
 const LoginController = {
+  GetAllUsers: async(req, res) => {
+    try {
+      const listUser = await User.findAll({
+        where: {
+          role: 'user'
+        }
+      })
+      const listAuthor = await User.findAll({
+        where: {
+            role: 'author'
+        },
+        // attributes: {
+        //     include: [
+        //         [sequelize.literal(`(
+        //             SELECT COUNT(*)
+        //             FROM news AS News
+        //             WHERE
+        //                 News.userId = User.id
+        //         )`), 'newsCount']
+        //     ]
+        // }
+    });
+      return res.render("admin/ManagerUser", {listUser, listAuthor});
+    } catch (error) {
+      res.status(500).send("server err");
+    }
+  },
   Logout: (req, res) => {
     res.cookie("accessToken", "", { expires: new Date(0) });
     res.cookie("refreshToken", "", { expires: new Date(0) });

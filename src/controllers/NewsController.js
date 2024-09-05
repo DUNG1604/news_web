@@ -9,6 +9,7 @@ const { Op } = require("sequelize");
 const jwtHelper = require("../helpers/jwt.helper");
 const Like = require("../models/like_post");
 const User = require("../models/user");
+const { sequelize } = require("../helpers/ConnectDB");
 
 const NewsController = {
   Like: async (req, res) =>{
@@ -101,6 +102,36 @@ const NewsController = {
         return res.status(500).send("Server error");
       }
     });
+  },
+  AcceptedNews: async (req, res) => {
+    try {
+      const newsId = req.params.id;
+      const news = await News.findOne({
+        where: {
+          id: newsId
+        }
+      })
+      news.status = 'accept';
+      await news.save();
+      res.status(200).json({ message: "Chấp nhận"});
+    } catch (error) {
+      res.status(500).send('Có lỗi xảy ra khi chấp nhận bài đăng');
+    }
+  },
+  RejectedNews: async (req, res) => {
+    try {
+      const newsId = req.params.id;
+      const news = await News.findOne({
+        where: {
+          id: newsId
+        }
+      })
+      news.status = 'reject';
+      await news.save();
+      res.status(200).json({ message: "Từ chối"});
+    } catch (error) {
+      res.status(500).send('Có lỗi xảy ra khi từ chối bài đăng');
+    }
   },
   Edit: async (req, res) => {
     const cardId = req.params.id;
@@ -219,6 +250,71 @@ const NewsController = {
       const listnews = await News.findAll();
       return res.render("admin/ManagerNews", { listnews });
     } catch (error) {
+      res.status(500).send("server err");
+    }
+  },
+  GetNewsPending: async (req, res) => {
+    try {
+      const listNewsPending = await News.findAll({
+        where:{
+          status: 'pending'
+        },
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`(
+                SELECT username
+                FROM users AS User
+                WHERE User.id = News.userId
+              )`), 
+              'nameAuthor'
+            ]
+          ]
+        },
+        raw: true,
+        nest: true
+      })
+      const listNewsAccept = await News.findAll({
+        where:{
+          status: 'accept'
+        },
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`(
+                SELECT username
+                FROM users AS User
+                WHERE User.id = News.userId
+              )`), 
+              'nameAuthor'
+            ]
+          ]
+        },
+        raw: true,
+        nest: true
+      })
+      const listNewsReject = await News.findAll({
+        where:{
+          status: 'reject'
+        },
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`(
+                SELECT username
+                FROM users AS User
+                WHERE User.id = News.userId
+              )`), 
+              'nameAuthor'
+            ]
+          ]
+        },
+        raw: true,
+        nest: true
+      })
+      return res.render("admin/ManagerNews", {listNewsAccept, listNewsPending, listNewsReject});
+    } catch (error) {
+      console.log(error)
       res.status(500).send("server err");
     }
   },

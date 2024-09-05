@@ -1,57 +1,171 @@
 <div class="container-fluid">
-    <div class="row">
-      <!-- Thanh tùy chọn bên trái -->
-      <nav
-        id="sidebarMenu"
-        class="col-md-3 col-lg-2 d-md-block bg-dark text-light sidebar"
-        style="height: 100vh; position: fixed;"
-      >
-        <div class="position-sticky pt-3">
-          <h4 class="px-3">Trang chủ</h4>
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a
-                class="nav-link active text-light"
-                aria-current="page"
-                href="/admin/manager-users"
-              >
-                <i class="fas fa-users"></i> Quản lý người dùng
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-light" href="/admin/manager-news">
-                <i class="fas fa-user-edit"></i> Quản lý bài đăng
-              </a>
-            </li>
-            <li class="nav-item">
+  <div class="row">
+    <!-- Thanh tùy chọn bên trái -->
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark text-light sidebar"
+      style="height: 100vh; position: fixed;">
+      <div class="position-sticky pt-3">
+        <h4 class="px-3">Trang chủ</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active text-light" aria-current="page" href="/admin/manager-users">
+              <i class="fas fa-users"></i> Quản lý người dùng
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/manager-news">
+              <i class="fas fa-user-edit"></i> Quản lý bài đăng
+            </a>
+          </li>
+          <!-- <li class="nav-item">
               <a class="nav-link text-light" href="/admin/manage-posts">
                 <i class="fas fa-newspaper"></i> Quản lý bài viết
               </a>
-            </li>
-          </ul>
+            </li> -->
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="margin-left: auto;">
+      <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Quản lý bài viết</h1>
+      </div>
+
+      <div class="table-responsive">
+        <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">Bài viết chờ xác nhận</div>
+        <table>
+          <tr>
+            <th style="width: 50px; text-align: center;">STT</th>
+            <th style="width: 150px; text-align: center;">Bài đăng</th>
+            <th style="width: 150px; text-align: center;">Tác giả</th>
+            <th style="width: 190px; text-align: center;">Ngày tạo</th>
+            <th style="width: 190px; text-align: center;">Trạng thái</th>
+            <th style="width: 130px; text-align: center;">Thêm</th>
+          </tr>
+          <% listNewsPending.forEach((news, index)=> { %>
+            <tr>
+              <td style="text-align: center;">
+                <%= index + 1 %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.title %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.nameAuthor %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.createdAt.toLocaleString() %>
+              </td>
+              <td style="text-align: center;">
+                <% if (news.status==='pending' ) { %>
+                  <button class="action-btn btn btn-success" data-action="/admin/accept/<%= news.id %>"
+                    data-id="<%= news.id %>">Xác nhận</button>
+                  <button class="action-btn btn btn-danger" data-action="/admin/reject/<%= news.id %>"
+                    data-id="<%= news.id %>">Từ chối</button>
+                  <% } %>
+              </td>
+              <td style="text-align: center;">
+                <a href="/admin/manager-news/<%= news.id %>" class="btn btn-primary" style="margin-top: auto">Xem chi
+                  tiết</a>
+              </td>
+            </tr>
+            <% }) %>
+        </table>
+        <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px; margin-top: 10px;">Bài viết đã xác nhận
         </div>
-      </nav>
-  
-      <main
-        class="col-md-9 ms-sm-auto col-lg-10 px-md-4"
-        style="margin-left: auto;"
-      >
-        <div
-          class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-        >
-          <h1 class="h2">Quản lý bài viết</h1>
+        <table>
+          <tr>
+            <th style="width: 50px; text-align: center;">STT</th>
+            <th style="width: 150px; text-align: center;">Bài đăng</th>
+            <th style="width: 150px; text-align: center;">Tác giả</th>
+            <th style="width: 190px; text-align: center;">Ngày tạo</th>
+            <th style="width: 190px; text-align: center;">Thêm</th>
+          </tr>
+          <% listNewsAccept.forEach((news, index)=> { %>
+            <tr>
+              <td style="text-align: center;">
+                <%= index + 1 %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.title %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.nameAuthor %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.createdAt.toLocaleString() %>
+              </td>
+              <td style="text-align: center;">
+                <a href="/admin/manager-news/<%= news.id %>" class="btn btn-primary" style="margin-top: auto">Xem chi
+                  tiết</a>
+              </td>
+            </tr>
+            <% }) %>
+        </table>
+        <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px; margin-top: 10px;">Bài viết đã từ chối
         </div>
-  
-        <div class="table-responsive">
-          
-        </div>
-      </main>
-    </div>
+        <table>
+          <tr>
+            <th style="width: 50px; text-align: center;">STT</th>
+            <th style="width: 150px; text-align: center;">Bài đăng</th>
+            <th style="width: 150px; text-align: center;">Tác giả</th>
+            <th style="width: 190px; text-align: center;">Ngày tạo</th>
+            <th style="width: 190px; text-align: center;">Trạng thái</th>
+            <th style="width: 140px; text-align: center;">Thêm</th>
+          </tr>
+          <% listNewsReject.forEach((news, index)=> { %>
+            <tr>
+              <td style="text-align: center;">
+                <%= index + 1 %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.title %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.nameAuthor %>
+              </td>
+              <td style="text-align: center;">
+                <%= news.createdAt.toLocaleString() %>
+              </td>
+              <td style="text-align: center;">
+                <button class="action-btn btn btn-success" data-action="/admin/accept/<%= news.id %>"
+                  data-id="<%= news.id %>">Xác nhận lại</button>
+              </td>
+              <td style="text-align: center;">
+                <a href="/admin/manager-news/<%= news.id %>" class="btn btn-primary" style="margin-top: auto">Xem chi
+                  tiết</a>
+              </td>
+            </tr>
+            <% }) %>
+        </table>
+      </div>
+    </main>
   </div>
-  
-  <!-- FontAwesome for icons -->
-  <script
-    src="https://kit.fontawesome.com/a076d05399.js"
-    crossorigin="anonymous"
-  ></script>
-  
+</div>
+<script>
+  $(document).ready(function () {
+    $(".action-btn").on("click", function (e) {
+      e.preventDefault();
+
+      const button = $(this);
+      const actionUrl = button.data("action");
+
+      $.ajax({
+        url: actionUrl,
+        type: "POST",
+        success: function (response) {
+          // Redirect to the same page to refresh the status
+          window.location.href = "/admin/manager-news";
+        },
+        error: function (xhr) {
+          const err = xhr.responseJSON.error || "Có lỗi xảy ra khi gửi yêu cầu";
+          alert(err);
+        }
+      });
+    });
+  });
+</script>
+
+
+<!-- FontAwesome for icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>

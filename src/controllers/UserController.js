@@ -2,6 +2,7 @@ const { where } = require("sequelize");
 const jwtHelper = require("../helpers/jwt.helper");
 const User = require("../models/user");
 const News = require("../models/news");
+const {sequelize} = require("../helpers/ConnectDB")
 
 const LoginController = {
   GetAllUsers: async(req, res) => {
@@ -15,16 +16,20 @@ const LoginController = {
         where: {
             role: 'author'
         },
-        // attributes: {
-        //     include: [
-        //         [sequelize.literal(`(
-        //             SELECT COUNT(*)
-        //             FROM news AS News
-        //             WHERE
-        //                 News.userId = User.id
-        //         )`), 'newsCount']
-        //     ]
-        // }
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`(
+                SELECT COUNT(*)
+                FROM news AS News
+                WHERE News.userId = User.id
+              )`), 
+              'newsCount'
+            ]
+          ]
+        },
+        raw: true
+
     });
       return res.render("admin/ManagerUser", {listUser, listAuthor});
     } catch (error) {

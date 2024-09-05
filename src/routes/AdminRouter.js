@@ -13,8 +13,11 @@ router.use(AuthMiddleware.isAdmin);
 // router.get("/create",NewsController.Create);
 // router.post("/create",NewsController.postCreate);
 // router.get("/:id",NewsController.DetailAdmin);
+router.post("/accept/:id",NewsController.AcceptedNews);
+router.post("/reject/:id",NewsController.RejectedNews);
 router.get("/manager-users",UserController.GetAllUsers);
-router.get("/manager-news",NewsController.GetAllNews);
+router.get("/manager-news/:id", NewsController.DetailUser);
+router.get("/manager-news",NewsController.GetNewsPending);
 router.get("/",NewsController.GetHomeAdmin);
 
 module.exports = router;

@@ -1,24 +1,33 @@
 <div class="container mt-5">
+  <div style="margin-top: 100px;"></div>
   <form class="d-flex">
-    <input
-      class="searchInput form-control me-2"
-      name="search"
-      type="search"
-      placeholder="Tìm kiếm"
-      aria-label="Search"
-    />
+    <input class="searchInput form-control me-2" name="search" type="search" placeholder="Tìm kiếm"
+      aria-label="Search" />
     <button class="searchBtn btn btn-outline-success" type="submit">
       Search
     </button>
   </form>
   <div style="display: flex; margin-top: 10px">
-    <a
-      href="/author/create"
-      class="btn btn-primary"
-      style="margin-top: auto; margin-right: 10px; margin-bottom: 10px"
-      >Thêm bài viết</a
-    >
+    <a href="/author/create" class="btn btn-primary"
+      style="margin-top: auto; margin-right: 10px; margin-bottom: 10px">Thêm bài viết</a>
   </div>
+  <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px; margin-top: 10px;">Kết quả</div>
+  <table class="table table-bordered">
+    <thead>
+      <tr style="text-align: center">
+        <th>STT</th>
+        <th>Tên bài</th>
+        <th>Ảnh bìa</th>
+        <th>Nội dung</th>
+        <th>Chỉnh sửa</th>
+      </tr>
+    </thead>
+    <tbody class="SearchRespon">
+    </tbody>
+
+    </div>
+  </table>
+  <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px; margin-top: 10px;">Bài viết đang chờ duyệt</div>
   <table class="table table-bordered">
     <thead>
       <tr style="text-align: center">
@@ -30,13 +39,12 @@
       </tr>
     </thead>
     <tbody>
-      <% listnews.forEach((card, index) => { %>
-      <tr>
-        <td style="vertical-align: middle; width: 50px; text-align: center">
-          <%= index + 1 %>
-        </td>
-        <td
-          style="
+      <% listnewsPending.forEach((card, index)=> { %>
+        <tr>
+          <td style="vertical-align: middle; width: 50px; text-align: center">
+            <%= index + 1 %>
+          </td>
+          <td style="
             display: -webkit-box;
             -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
@@ -45,19 +53,13 @@
             max-height: 6.4em;
             line-height: 1.5em;
             width: 180px;
-          "
-        >
-          <%- card.title %>
-        </td>
-        <td style="vertical-align: middle; width: 100px">
-          <img
-            src="<%= card.img %>"
-            alt="Image"
-            style="width: 100px; height: 100px; object-fit: cover"
-          />
-        </td>
-        <td
-          style="
+          ">
+            <%- card.title %>
+          </td>
+          <td style="vertical-align: middle; width: 100px">
+            <img src="<%= card.img %>" alt="Image" style="width: 100px; height: 100px; object-fit: cover" />
+          </td>
+          <td style="
             display: -webkit-box;
             -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
@@ -66,75 +68,210 @@
             max-height: 6.4em;
             line-height: 1.5em;
             width: 643px;
-          "
-        >
-          <div><%- card.content %></div>
-        </td>
-        <td style="vertical-align: middle; text-align: center; width: 280px">
-          <div style="display: flex; justify-content: center; gap: 5px">
-            <a
-              href="/author/update/<%= card.id %>"
-              class="btn btn-primary"
-              style=""
-            >
-              Sửa
-            </a>
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-toggle="modal"
-              data-bs-target="#modal<%= card.id %>"
-              style=""
-            >
-              Xóa
-            </button>
-            <a href="/author/<%= card.id %>" class="btn btn-secondary" style="">
-              Xem chi tiết
-            </a>
-          </div>
-        </td>
-      </tr>
-      <div
-        class="modal fade"
-        id="modal<%= card.id %>"
-        tabindex="-1"
-        aria-labelledby="modalLabel<%= card.id %>"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalLabel<%= card.id %>">
-                Bạn muốn xóa bài viết chứ!
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body"><%- card.title %></div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Đóng
-              </button>
-              <button
-                data-id="<%= card.id %>"
-                type="button"
-                class="btn btn-danger deleteNewsButton"
-              >
+          ">
+            <div><%- card.content %></div>
+          </td>
+          <td style="vertical-align: middle; text-align: center; width: 280px">
+            <div style="display: flex; justify-content: center; gap: 5px">
+              <a href="/author/update/<%= card.id %>" class="btn btn-primary" style="">
+                Sửa
+              </a>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal<%= card.id %>"
+                style="">
                 Xóa
               </button>
+              <a href="/author/<%= card.id %>" class="btn btn-secondary" style="">
+                Xem chi tiết
+              </a>
+            </div>
+          </td>
+        </tr>
+        <div class="modal fade" id="modal<%= card.id %>" tabindex="-1" aria-labelledby="modalLabel<%= card.id %>"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel<%= card.id %>">
+                  Bạn muốn xóa bài viết chứ!
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body"><%- card.title %></div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Đóng
+                </button>
+                <button data-id="<%= card.id %>" type="button" class="btn btn-danger deleteNewsButton">
+                  Xóa
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <% }) %>
+        <% }) %>
+    </tbody>
+  </table>
+  <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px; margin-top: 10px;">Bài viết đã được duyệt</div>
+  <table class="table table-bordered">
+    <thead>
+      <tr style="text-align: center">
+        <th>STT</th>
+        <th>Tên bài</th>
+        <th>Ảnh bìa</th>
+        <th>Nội dung</th>
+        <th>Chỉnh sửa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% listnewsAccept.forEach((card, index)=> { %>
+        <tr>
+          <td style="vertical-align: middle; width: 50px; text-align: center">
+            <%= index + 1 %>
+          </td>
+          <td style="
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 6.4em;
+            line-height: 1.5em;
+            width: 180px;
+          ">
+            <%- card.title %>
+          </td>
+          <td style="vertical-align: middle; width: 100px">
+            <img src="<%= card.img %>" alt="Image" style="width: 100px; height: 100px; object-fit: cover" />
+          </td>
+          <td style="
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 6.4em;
+            line-height: 1.5em;
+            width: 643px;
+          ">
+            <div><%- card.content %></div>
+          </td>
+          <td style="vertical-align: middle; text-align: center; width: 280px">
+            <div style="display: flex; justify-content: center; gap: 5px">
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal<%= card.id %>"
+                style="">
+                Xóa
+              </button>
+              <a href="/author/<%= card.id %>" class="btn btn-secondary" style="">
+                Xem chi tiết
+              </a>
+            </div>
+          </td>
+        </tr>
+        <div class="modal fade" id="modal<%= card.id %>" tabindex="-1" aria-labelledby="modalLabel<%= card.id %>"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel<%= card.id %>">
+                  Bạn muốn xóa bài viết chứ!
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body"><%- card.title %></div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Đóng
+                </button>
+                <button data-id="<%= card.id %>" type="button" class="btn btn-danger deleteNewsButton">
+                  Xóa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+    </tbody>
+  </table>
+
+  <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px; margin-top: 10px;">Bài viết đã bị từ chối</div>
+  <table class="table table-bordered">
+    <thead>
+      <tr style="text-align: center">
+        <th>STT</th>
+        <th>Tên bài</th>
+        <th>Ảnh bìa</th>
+        <th>Nội dung</th>
+        <th>Chỉnh sửa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% listnewsReject.forEach((card, index)=> { %>
+        <tr>
+          <td style="vertical-align: middle; width: 50px; text-align: center">
+            <%= index + 1 %>
+          </td>
+          <td style="
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 6.4em;
+            line-height: 1.5em;
+            width: 180px;
+          ">
+            <%- card.title %>
+          </td>
+          <td style="vertical-align: middle; width: 100px">
+            <img src="<%= card.img %>" alt="Image" style="width: 100px; height: 100px; object-fit: cover" />
+          </td>
+          <td style="
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 6.4em;
+            line-height: 1.5em;
+            width: 643px;
+          ">
+            <div><%- card.content %></div>
+          </td>
+          <td style="vertical-align: middle; text-align: center; width: 280px">
+            <div style="display: flex; justify-content: center; gap: 5px">
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal<%= card.id %>"
+                style="">
+                Xóa
+              </button>
+              <a href="/author/<%= card.id %>" class="btn btn-secondary" style="">
+                Xem chi tiết
+              </a>
+            </div>
+          </td>
+        </tr>
+        <div class="modal fade" id="modal<%= card.id %>" tabindex="-1" aria-labelledby="modalLabel<%= card.id %>"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel<%= card.id %>">
+                  Bạn muốn xóa bài viết chứ!
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body"><%- card.title %></div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Đóng
+                </button>
+                <button data-id="<%= card.id %>" type="button" class="btn btn-danger deleteNewsButton">
+                  Xóa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
     </tbody>
   </table>
 </div>
@@ -175,7 +312,7 @@
     });
 
     function renderNews(newsList) {
-      const tbody = $("table tbody");
+      const tbody = $(".SearchRespon");
       tbody.empty();
       newsList.forEach((news, index) => {
         tbody.append(`
@@ -196,9 +333,8 @@
               ${news.title}
             </td>
             <td style="vertical-align: middle; width: 100px;">
-              <img src="${
-                news.img
-              }" alt="Image" style="width: 100px; height: 100px; object-fit: cover;" />
+              <img src="${news.img
+          }" alt="Image" style="width: 100px; height: 100px; object-fit: cover;" />
             </td>
             <td style="
               display: -webkit-box;
@@ -214,37 +350,30 @@
             </td>
             <td style="vertical-align: middle; text-align: center; width: 280px;">
               <div style="display: flex; justify-content: center; gap: 5px;">
-                <a href="/author/update/${
-                  news.id
-                }" class="btn btn-primary">Sửa</a>
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal${
-                  news.id
-                }">Xóa</button>
-                <a href="/author/${
-                  news.id
-                }" class="btn btn-secondary">Xem chi tiết</a>
+                <a href="/author/update/${news.id
+          }" class="btn btn-primary">Sửa</a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal${news.id
+          }">Xóa</button>
+                <a href="/author/${news.id
+          }" class="btn btn-secondary">Xem chi tiết</a>
               </div>
             </td>
           </tr>
-          <div class="modal fade" id="modal${
-            news.id
-          }" tabindex="-1" aria-labelledby="modalLabel${
-          news.id
-        }" aria-hidden="true">
+          <div class="modal fade" id="modal${news.id
+          }" tabindex="-1" aria-labelledby="modalLabel${news.id
+          }" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="modalLabel${
-                    news.id
-                  }">Bạn muốn xóa bài viết chứ!</h5>
+                  <h5 class="modal-title" id="modalLabel${news.id
+          }">Bạn muốn xóa bài viết chứ!</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">${news.title}</div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                  <button data-id="${
-                    news.id
-                  }" type="button" class="btn btn-danger deleteNewsButton">Xóa</button>
+                  <button data-id="${news.id
+          }" type="button" class="btn btn-danger deleteNewsButton">Xóa</button>
                 </div>
               </div>
             </div>

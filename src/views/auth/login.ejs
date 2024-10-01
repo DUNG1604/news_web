@@ -60,8 +60,8 @@
       success: function (data) {
         localStorage.setItem("role", data.data.role);
 
-        if (data.data.role === "user") {
-          window.location.href = "/";
+        if (data.data.role === "reader") {
+          window.location.href = "/user";
         }
         if (data.data.role === "author") {
           window.location.href = "/author";

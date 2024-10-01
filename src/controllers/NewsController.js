@@ -12,7 +12,19 @@ const User = require("../models/user");
 const { sequelize } = require("../helpers/ConnectDB");
 
 const NewsController = {
-  Like: async (req, res) =>{
+  GetHomeUser: async (req, res) => {
+    try {
+      const listnews = await News.findAll({
+        where: {
+          status: 'accept'
+        }
+      });
+      return res.render("home", { listnews });
+    } catch (error) {
+      res.status(500).send("server err");
+    }
+  },
+  Like: async (req, res) => {
     try {
       const likePost = await Like.create({});
       return res.status(200).send("đã like");
@@ -22,6 +34,19 @@ const NewsController = {
 
   },
   Search: async (req, res) => {
+    const { search } = req.body;
+    const results = await News.findAll({
+      where: {
+        title: {
+          [Op.like]: `%${search}%`,
+        },
+        status: 'accept'
+      },
+    });
+    const data = results.map((news) => news.dataValues);
+    return res.status(200).json(data);
+  },
+  SearchAuthor: async (req, res) => {
     const { search } = req.body;
     const results = await News.findAll({
       where: {
@@ -68,9 +93,8 @@ const NewsController = {
           });
 
           blobStream.on("finish", async () => {
-            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-              bucket.name
-            }/o/${encodeURIComponent(blob.name)}?alt=media`;
+            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name
+              }/o/${encodeURIComponent(blob.name)}?alt=media`;
 
             try {
               news.title = title;
@@ -113,7 +137,7 @@ const NewsController = {
       })
       news.status = 'accept';
       await news.save();
-      res.status(200).json({ message: "Chấp nhận"});
+      res.status(200).json({ message: "Chấp nhận" });
     } catch (error) {
       res.status(500).send('Có lỗi xảy ra khi chấp nhận bài đăng');
     }
@@ -128,7 +152,7 @@ const NewsController = {
       })
       news.status = 'reject';
       await news.save();
-      res.status(200).json({ message: "Từ chối"});
+      res.status(200).json({ message: "Từ chối" });
     } catch (error) {
       res.status(500).send('Có lỗi xảy ra khi từ chối bài đăng');
     }
@@ -144,10 +168,27 @@ const NewsController = {
   },
   DetailAdmin: async (req, res) => {
     const cardId = req.params.id;
-    const news = await News.findOne({ where: { id: cardId } });
+    const news = await News.findOne({ 
+      where: { 
+        id: cardId 
+      },
+      attributes: {
+        include: [
+          [
+            sequelize.literal(`(
+              SELECT username
+              FROM users
+              WHERE News.userId = users.id
+            )`), 
+            'authorName'
+          ]
+        ]
+      },
+    });
     if (news) {
       news.views = news.views + 1;
       await news.save();
+      console.log(news);
       res.render("author/newsDetailAuthor", { news: news });
     } else {
       res.status(404).send("Không có bài báo");
@@ -155,7 +196,11 @@ const NewsController = {
   },
   DetailUser: async (req, res) => {
     const cardId = req.params.id;
-    const news = await News.findOne({ where: { id: cardId } });
+    const news = await News.findOne({
+      where: {
+        id: cardId
+      }
+    });
     if (news) {
       news.views = news.views + 1;
       await news.save();
@@ -196,9 +241,8 @@ const NewsController = {
           });
 
           blobStream.on("finish", async () => {
-            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-              bucket.name
-            }/o/${encodeURIComponent(blob.name)}?alt=media`;
+            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name
+              }/o/${encodeURIComponent(blob.name)}?alt=media`;
 
             try {
               const newNews = await News.create({
@@ -256,7 +300,7 @@ const NewsController = {
   GetNewsPending: async (req, res) => {
     try {
       const listNewsPending = await News.findAll({
-        where:{
+        where: {
           status: 'pending'
         },
         attributes: {
@@ -266,7 +310,7 @@ const NewsController = {
                 SELECT username
                 FROM users AS User
                 WHERE User.id = News.userId
-              )`), 
+              )`),
               'nameAuthor'
             ]
           ]
@@ -275,7 +319,7 @@ const NewsController = {
         nest: true
       })
       const listNewsAccept = await News.findAll({
-        where:{
+        where: {
           status: 'accept'
         },
         attributes: {
@@ -285,7 +329,7 @@ const NewsController = {
                 SELECT username
                 FROM users AS User
                 WHERE User.id = News.userId
-              )`), 
+              )`),
               'nameAuthor'
             ]
           ]
@@ -294,7 +338,7 @@ const NewsController = {
         nest: true
       })
       const listNewsReject = await News.findAll({
-        where:{
+        where: {
           status: 'reject'
         },
         attributes: {
@@ -304,7 +348,7 @@ const NewsController = {
                 SELECT username
                 FROM users AS User
                 WHERE User.id = News.userId
-              )`), 
+              )`),
               'nameAuthor'
             ]
           ]
@@ -312,7 +356,7 @@ const NewsController = {
         raw: true,
         nest: true
       })
-      return res.render("admin/ManagerNews", {listNewsAccept, listNewsPending, listNewsReject});
+      return res.render("admin/ManagerNews", { listNewsAccept, listNewsPending, listNewsReject });
     } catch (error) {
       console.log(error)
       res.status(500).send("server err");
@@ -322,12 +366,25 @@ const NewsController = {
     try {
       const userId = req.jwtDecoded.data.id;
       console.log("idAuthor: ", userId);
-      const listnews = await News.findAll({
+      const listnewsPending = await News.findAll({
         where: {
           userId: userId,
+          status: 'pending'
         },
       });
-      return res.render("author/homeAuthor", { listnews });
+      const listnewsAccept = await News.findAll({
+        where: {
+          userId: userId,
+          status: 'accept'
+        },
+      });
+      const listnewsReject = await News.findAll({
+        where: {
+          userId: userId,
+          status: 'reject'
+        },
+      });
+      return res.render("author/homeAuthor", { listnewsPending, listnewsAccept, listnewsReject });
     } catch (error) {
       res.status(500).send("Không lấy được thông tin");
     }

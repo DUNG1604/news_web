@@ -6,4 +6,5 @@ const NewsController = require("../controllers/NewsController");
 const router = express.Router();
 router.use(AuthMiddleware.isAuth);
 router.post("/search",NewsController.Search);
+router.get("/",NewsController.GetHomeUser);
 module.exports = router;

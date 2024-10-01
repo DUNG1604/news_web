@@ -6,7 +6,7 @@ const AuthorController = require("../controllers/AuthorController");
 const router = express.Router();
 router.use(AuthMiddleware.isAuth,);
 router.use(AuthMiddleware.isAuthor);
-router.post("/search",NewsController.Search);
+router.post("/search",NewsController.SearchAuthor);
 router.post("/delete/:id",NewsController.Delete);
 router.post("/update/:id",NewsController.postUpdate);
 router.get("/update/:id",NewsController.Edit);
